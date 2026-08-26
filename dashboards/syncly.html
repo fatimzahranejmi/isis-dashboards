@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Isis Intelligence Report — Syncly</title>
+  <title>Isis Intelligence Brief — Syncly</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
       --text-secondary: #6B5F52;      /* warm grey-brown */
       --text-tertiary: #9C9082;       /* muted taupe for labels/timestamps */
 
-      /* Tier badges — amber/gold for top tier, NOT red */
+      /* Tier badges */
       --accent-tier1-text: #A8681A;
       --accent-tier1-bg: rgba(214, 149, 56, 0.14);
       --accent-tier1-border: rgba(214, 149, 56, 0.30);
@@ -36,7 +36,7 @@
       --accent-tier3-text: #8A8072;
       --accent-tier3-bg: rgba(138, 128, 114, 0.12);
 
-      /* Potential Score — teal, distinct from Opportunity Rating */
+      /* Potential Score — teal */
       --accent-teal-text: #0F766E;
       --accent-teal-bg: rgba(15, 118, 110, 0.10);
       --accent-teal-border: rgba(15, 118, 110, 0.22);
@@ -194,12 +194,42 @@
       opacity: 0.8;
     }
 
+    /* What They Do Hero Box */
+    .what-they-do-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-left: 4px solid #0F766E;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 16px 0 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .what-they-do-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .what-they-do-text {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
     /* Basic Summary & Sector Context Grid */
     .overview-grid {
       display: grid;
       grid-template-columns: 1.4fr 1fr;
       gap: 12px;
-      margin: 16px 0 12px;
+      margin-bottom: 12px;
     }
 
     .basic-summary-box {
@@ -254,17 +284,17 @@
       line-height: 1.5;
     }
 
-    /* Firmographics Stats Row */
+    /* Firmographics Card */
     .firmographics-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
-      padding: 14px 18px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
       box-shadow: var(--card-shadow);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 20px;
     }
 
     .firmographic-stat {
@@ -276,9 +306,9 @@
     .stat-label {
       font-size: 10.5px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
+      letter-spacing: 0.04em;
       color: var(--text-tertiary);
+      font-weight: 500;
     }
 
     .stat-value {
@@ -287,12 +317,12 @@
       color: var(--text-primary);
     }
 
-    /* Score Overview Bar */
+    /* Scores Grid */
     .scores-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
     }
 
     .score-card {
@@ -307,9 +337,9 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--text-tertiary);
       font-weight: 600;
-      margin-bottom: 6px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
     }
 
     .score-val-row {
@@ -320,23 +350,23 @@
 
     .score-number {
       font-family: var(--font-mono);
-      font-size: 26px;
+      font-size: 34px;
       font-weight: 700;
+      line-height: 1;
       color: var(--text-primary);
     }
 
     .score-scale {
       font-size: 13px;
       color: var(--text-tertiary);
-      font-family: var(--font-mono);
     }
 
     .score-badge-inline {
+      margin-left: auto;
       font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      margin-left: 8px;
       font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
     }
 
     .score-badge-teal {
@@ -351,43 +381,90 @@
       border: 1px solid var(--accent-green-border);
     }
 
-    /* Cards & Panels */
+    /* Main Section Card */
     .card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
       padding: 20px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       box-shadow: var(--card-shadow);
     }
 
     .section-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .section-title {
-      font-size: 11.5px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-size: 13px;
       font-weight: 600;
-      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
     }
 
+    /* Brand Messaging Coherence Audit Box */
+    .coherence-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 4px;
+    }
+
+    .coherence-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .coherence-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      background: rgba(15, 118, 110, 0.10);
+      color: #0F766E;
+      border: 1px solid rgba(15, 118, 110, 0.25);
+    }
+
+    .coherence-status-pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .coherence-critique-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Executive Briefing */
     .executive-text {
+      font-size: 14px;
       color: var(--text-primary);
-      font-size: 13.5px;
       line-height: 1.65;
     }
 
-    /* Weaknesses & Opportunities */
+    /* Weaknesses & Opportunities 2-Column Split */
     .split-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .split-panel {
@@ -399,18 +476,25 @@
     }
 
     .panel-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-      margin-bottom: 14px;
     }
 
-    .title-weakness { color: var(--accent-rose-text); }
-    .title-opportunity { color: var(--accent-green-text); }
+    .title-weakness {
+      color: var(--accent-rose-text);
+    }
+
+    .title-opportunity {
+      color: var(--accent-green-text);
+    }
 
     .panel-list {
       list-style: none;
@@ -420,29 +504,30 @@
     }
 
     .panel-item {
-      font-size: 13px;
+      font-size: 12.5px;
       line-height: 1.5;
-      color: var(--text-secondary);
-      position: relative;
-      padding-left: 14px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
     }
 
-    .panel-item::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      top: 0;
-      font-size: 14px;
+    .weakness-item {
+      background: var(--accent-rose-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-rose-border);
     }
 
-    .weakness-item::before { color: var(--accent-rose-text); }
-    .opportunity-item::before { color: var(--accent-green-text); }
+    .opportunity-item {
+      background: var(--accent-green-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-green-border);
+    }
 
-    /* Social Media Activity Status Section */
+    /* Channels Grid */
     .channel-status-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
       margin-bottom: 14px;
     }
 
@@ -450,45 +535,31 @@
       background: var(--bg-surface-raised);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      padding: 10px 8px;
-      text-align: center;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      text-decoration: none;
-      box-shadow: 0 1px 2px rgba(60, 50, 35, 0.03);
-      transition: background-color 0.15s ease, border-color 0.15s ease;
+      gap: 6px;
     }
 
-    .channel-card:hover {
-      background-color: var(--bg-subtle);
-      border-color: var(--border-medium);
+    .channel-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .channel-card.inactive {
-      opacity: 0.45;
-      cursor: default;
-      pointer-events: none;
-      background: transparent;
-      border-style: dashed;
-      box-shadow: none;
-    }
-
-    .channel-name {
-      font-size: 12px;
+    .channel-name-tag {
       font-weight: 600;
+      font-size: 12px;
       color: var(--text-primary);
     }
 
     .status-pill {
       font-size: 10px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      padding: 2px 6px;
+      padding: 2px 7px;
       border-radius: 4px;
-      display: inline-block;
-      margin: 0 auto;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
 
     .status-active {
@@ -650,19 +721,20 @@
     }
 
     .copy-btn:hover {
-      background: rgba(60, 50, 35, 0.12);
-      border-color: var(--text-secondary);
+      background: var(--bg-surface);
+      border-color: var(--text-tertiary);
     }
 
     .draft-content {
-      font-size: 13px;
-      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
       line-height: 1.6;
+      color: var(--text-primary);
       white-space: pre-wrap;
-      font-family: var(--font-sans);
+      word-break: break-word;
     }
 
-    /* Marketing Jobs Available */
+    /* Jobs Section */
     .jobs-list {
       display: flex;
       flex-direction: column;
@@ -673,45 +745,41 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 9px 12px;
+      padding: 10px 14px;
       background: var(--bg-surface-raised);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      font-size: 13px;
     }
 
     .job-role {
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 13px;
       color: var(--text-primary);
     }
 
     .job-location {
-      font-size: 11px;
-      font-family: var(--font-mono);
+      font-size: 11.5px;
       color: var(--text-secondary);
-      background: var(--bg-app);
-      padding: 2px 6px;
+      background: var(--bg-subtle);
+      padding: 2px 8px;
       border-radius: 4px;
-      border: 1px solid var(--border-subtle);
     }
 
-    /* Decision Maker Cards List */
+    /* Decision Makers Section */
     .dm-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .dm-card {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 10px 12px;
+      align-items: center;
+      padding: 12px 16px;
       background: var(--bg-surface-raised);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      box-shadow: 0 1px 2px rgba(60, 50, 35, 0.03);
     }
 
     .dm-info {
@@ -721,23 +789,22 @@
     }
 
     .dm-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
       background: var(--bg-subtle);
-      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 600;
-      font-size: 12.5px;
-      color: var(--text-primary);
-      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      border: 1px solid var(--border-subtle);
     }
 
     .dm-name {
-      font-size: 13.5px;
       font-weight: 600;
+      font-size: 13.5px;
       color: var(--text-primary);
     }
 
@@ -751,38 +818,27 @@
       align-items: center;
       gap: 6px;
       padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      background: var(--bg-surface);
+      background: var(--bg-subtle);
       color: var(--text-primary);
       border: 1px solid var(--border-medium);
+      border-radius: 6px;
       text-decoration: none;
-      transition: background-color 0.15s ease, border-color 0.15s ease;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
     }
 
     .dm-action-btn:hover {
-      background-color: var(--bg-subtle);
-      border-color: var(--text-secondary);
+      background: var(--bg-surface);
+      color: var(--text-primary);
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .scores-grid, .split-grid, .overview-grid, .firmographics-card {
+    @media (max-width: 680px) {
+      .overview-grid, .scores-grid, .split-grid, .firmographics-card {
         grid-template-columns: 1fr;
       }
       .channel-status-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .company-title-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .tier-wrapper {
-        align-items: flex-start;
-      }
-      .tier-rationale {
-        text-align: left;
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
@@ -791,10 +847,10 @@
 
   <div class="container">
 
-    <!-- Top Navigation with Isis Rebrand -->
+    <!-- Top Status Bar -->
     <div class="top-bar">
       <span class="system-label">Isis // Intelligence Brief</span>
-      <span class="audit-date">Audited: August 20, 2026</span>
+      <span class="audit-date">Live Growth Intelligence & Acquisition Stack</span>
     </div>
 
     <!-- 1. Header (Company Name, Website, Tier Badge + Dynamic Rationale) -->
@@ -805,33 +861,46 @@
         </div>
         <div class="tier-wrapper">
           <div class="badge-tier"><span class="badge-dot"></span>Tier 3 (Low Potential)</div>
-          <span class="tier-rationale">Tier 2: Solid market foundation (35/100) with key technical conversion opportunities.</span>
+          <span class="tier-rationale">Tier C classification is driven by a non-functional web SEO profile, complete absence of tracking pixels, and zero active marketing hiring signals.</span>
         </div>
       </div>
       <a href="https://syncly.video" target="_blank" class="website-link">syncly.video<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
     </header>
 
-    <!-- 2. Basic Summary & Sector Context (Side by Side) -->
+    <!-- 2. What The Company Does (Core Value Proposition) -->
+    <div class="what-they-do-card">
+      <span class="what-they-do-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        What They Do & Core Value Proposition
+      </span>
+      <p class="what-they-do-text">Syncly provides legal video management and governance integration software tailored for law firms and corporate legal departments. Its software integrates with enterprise platforms like Thomson Reuters HighQ to streamline secure video storage, workflow management, and evidence compliance.</p>
+    </div>
+
+    <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
     <div class="overview-grid">
       <div class="basic-summary-box">
-        <span class="overview-label">Company Overview</span>
-        <p class="basic-summary-text">Established platform with sustained market reach. Demonstrates solid brand authority but reveals technical conversion leaks across digital paid retargeting and search indexing.</p>
+        <span class="overview-label">Commercial Market Posture</span>
+        <p class="basic-summary-text">Syncly enjoys strong co-marketing momentum through HighQ and Thomson Reuters legal ecosystem partnerships, but operates with a completely unoptimized web domain. The company is currently leaking high-intent referral traffic due to missing technical SEO, tracking, and lead capture infrastructure.</p>
       </div>
 
       <div class="sector-box">
         <span class="overview-label">Sector Context</span>
         <div>
-          <span class="sector-tag">B2B Technology &amp; Commerce Platforms</span>
+          <span class="sector-tag">B2B SaaS — Legal Tech &amp; Video Collaboration</span>
         </div>
-        <p class="sector-text">Competitive enterprise landscape with demanding buyer evaluation cycles. Clear differentiation and conversion tracking are vital for margin expansion.</p>
+        <p class="sector-text">Legal tech features extended sales cycles driven by strict security, compliance, and governance requirements. Revenue growth relies heavily on integration ecosystem visibility and high-trust inbound conversion funnels.</p>
       </div>
     </div>
 
-    <!-- 2b. Firmographics Stats Row -->
+    <!-- 2c. Firmographics Stats Row -->
     <div class="firmographics-card">
-      <div class="firmographic-stat"><span class="stat-label">Employee Count</span><span class="stat-value">100 – 500 employees</span></div>
-      <div class="firmographic-stat"><span class="stat-label">Funding & Stage</span><span class="stat-value">Scaleup (Profitable / Well-Capitalized)</span></div>
-      <div class="firmographic-stat"><span class="stat-label">Founded Year</span><span class="stat-value">—</span></div>
+      <div class="firmographic-stat"><span class="stat-label">Employee Count</span><span class="stat-value">10 – 50 employees</span></div>
+      <div class="firmographic-stat"><span class="stat-label">Funding & Stage</span><span class="stat-value">Seed (Undisclosed)</span></div>
+      <div class="firmographic-stat"><span class="stat-label">Founded Year</span><span class="stat-value">2021</span></div>
     </div>
 
     <!-- 3. Score Overview -->
@@ -845,7 +914,7 @@
       <div class="score-card">
         <div class="score-label">Opportunity Rating</div>
         <div class="score-val-row">
-          <span class="score-number">12</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-green">Long-Term Lead</span>
+          <span class="score-number">10</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-green">Long-Term Lead</span>
         </div>
       </div>
     </div>
@@ -855,17 +924,31 @@
       <div class="section-header">
         <span class="section-title">Executive Briefing</span>
       </div>
-      <p class="executive-text">Syncly demonstrates significant brand momentum and inbound market interest. However, key top-of-funnel inefficiencies—specifically in conversion retargeting and structured entity indexing—limit full monetization of existing site visitors. Targeting decision-makers with a concise technical audit delivers an immediate value-add conversation starter.</p>
+      <p class="executive-text">Syncly has achieved valuable market validation through integrations with Thomson Reuters HighQ and CoCounsel. However, the commercial engine is severely bottlenecked by its owned digital real estate. The primary website lacks basic metadata, schema markup, and content hubs, preventing organic indexation. Crucially, with zero analytics or retargeting pixels installed, Syncly is currently incapable of capturing or nurturing enterprise leads arriving from partner PR.</p>
+    </div>
+
+    <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Brand & Cross-Channel Messaging Coherence</span>
+      </div>
+      <div class="coherence-box">
+        <div class="coherence-header-row">
+          <span class="coherence-status-pill">Severe Infrastructure Disconnect</span>
+          <span class="coherence-score-badge">Coherence Score: 3.0 / 10</span>
+        </div>
+        <p class="coherence-critique-text">While Syncly secures tier-one legal industry validation via Thomson Reuters co-branding, its website (syncly.video) is a technical dead zone. The domain lacks basic page titles, meta descriptions, indexable H1 headers, and conversion widgets, resulting in a severe drop off in credibility for prospective enterprise legal buyers.</p>
+      </div>
     </div>
 
     <!-- 5. Weaknesses & Opportunities (2-Column Layout) -->
     <div class="split-grid">
       <div class="split-panel">
         <div class="panel-title title-weakness">
-          <span>Identified Weaknesses</span>
+          <span>Identified Weaknesses & Growth Impact</span>
         </div>
         <ul class="panel-list">
-<li class="panel-item weakness-item">No active blog or content hub detected (Untapped organic search content strategy)</li>
+<li class="panel-item weakness-item"><strong>No active blog or content hub detected</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Forfeits compounding organic search equity and top-of-funnel educational search traffic.</div></li>
         </ul>
       </div>
 
@@ -884,55 +967,73 @@
       <div class="section-header">
         <span class="section-title">Digital & Channel Footprint (Activity Status)</span>
       </div>
-      
-      <!-- 6 Channel Status Grid -->
+
+      <!-- Channel Grid (3x2) -->
       <div class="channel-status-grid">
 
-        <a href="https://www.linkedin.com/company/syncly" target="_blank" class="channel-card">
-          <span class="channel-name">LinkedIn</span>
-          <span class="status-pill status-active">Active</span>
-        </a>
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">LinkedIn</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.linkedin.com/company/syncly" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
 
-        <a href="https://x.com/syncly" target="_blank" class="channel-card">
-          <span class="channel-name">X (Twitter)</span>
-          <span class="status-pill status-active">Active</span>
-        </a>
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">X (Twitter)</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://x.com/syncly" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
 
-        <a href="https://www.youtube.com/@syncly" target="_blank" class="channel-card">
-          <span class="channel-name">YouTube</span>
-          <span class="status-pill status-dormant">Dormant</span>
-        </a>
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">YouTube</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.youtube.com/@syncly" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
 
-        <a href="https://www.instagram.com/syncly/" target="_blank" class="channel-card">
-          <span class="channel-name">Instagram</span>
-          <span class="status-pill status-dormant">Dormant</span>
-        </a>
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Instagram</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.instagram.com/syncly" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
 
-        <a href="https://www.tiktok.com/@syncly" target="_blank" class="channel-card">
-          <span class="channel-name">TikTok</span>
-          <span class="status-pill status-active">Active</span>
-        </a>
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">TikTok</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><a href="https://www.tiktok.com/@syncly" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
 
-        <div class="channel-card inactive">
-          <span class="channel-name">Facebook</span>
-          <span class="status-pill status-inactive">Inactive</span>
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Facebook</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
         </div>
       </div>
 
       <!-- Newsletter Status Row -->
-      <div class="newsletter-row"><span style="color: var(--text-secondary);">Email Newsletter & Lead Capture:</span><span style="color: var(--text-tertiary);">No Active Newsletter / Signup Detected</span></div>
+      <div class="newsletter-row"><span style="color: var(--text-secondary);">Email Newsletter & Lead Capture:</span><span class="status-pill status-inactive">Not Detected</span></div>
 
-      <!-- Posting Frequency Chart with Data Window Caption -->
+      <!-- Posting Frequency Chart -->
       <div style="margin-top: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
-          <span class="overview-label" style="margin-bottom: 0;">Estimated Weekly Posting Frequency</span>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
           <span class="data-window-caption">Estimated from public posts, last 90 days</span>
         </div>
         <div class="chart-container">
           <canvas id="postingFrequencyChart"></canvas>
         </div>
         <p class="companion-text">
-          <strong>Channel Activity Interpretation:</strong> LinkedIn and X are the primary active touchpoints. Inactive visual and video channels (YouTube, TikTok) represent untapped customer acquisition territory.</p>
+          <strong>Channel Activity Interpretation:</strong> Social activity relies almost exclusively on corporate partner announcements, while owned educational media and multi-channel marketing campaigns are non-existent.</p>
       </div>
     </div>
 
@@ -946,7 +1047,7 @@
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Organic B2B Social &amp; Thought Leadership</span>
+            <span class="meter-name">Ecosystem PR &amp; Partner Co-Marketing</span>
             <span class="meter-score">75 / 100 — Strong Existing Channel</span>
           </div>
           <div class="meter-track">
@@ -956,78 +1057,40 @@
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Inbound Content &amp; Educational Resources</span>
-            <span class="meter-score">60 / 100 — Moderate Foundation</span>
+            <span class="meter-name">Organic B2B Social &amp; Thought Leadership</span>
+            <span class="meter-score">35 / 100 — Underdeveloped Lever</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-blue" style="width: 60%;"></div>
+            <div class="meter-fill meter-blue" style="width: 35%;"></div>
           </div>
         </div>
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Technical SEO &amp; AI Search Indexing (GEO)</span>
-            <span class="meter-score">38 / 100 — Underdeveloped Lever</span>
+            <span class="meter-name">Technical SEO &amp; Schema Optimization</span>
+            <span class="meter-score">10 / 100 — Severe Leak / Untapped</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-amber" style="width: 38%;"></div>
+            <div class="meter-fill meter-amber" style="width: 10%;"></div>
           </div>
         </div>
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Paid Retargeting &amp; Audience Remarketing</span>
-            <span class="meter-score">15 / 100 — Severe Leak / Untapped</span>
+            <span class="meter-name">Inbound Lead Capture &amp; Retargeting Infrastructure</span>
+            <span class="meter-score">5 / 100 — Severe Leak / Untapped</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-rose" style="width: 15%;"></div>
-          </div>
-        </div>
-      </div>
-          <div class="meter-track">
-            <div class="meter-fill meter-teal" style="width: 78%;"></div>
-          </div>
-        </div>
-
-        <!-- 2. Content & Blog -->
-        <div class="growth-meter-item">
-          <div class="meter-label-row">
-            <span class="meter-name">Inbound Content & Educational Resources</span>
-            <span class="meter-score">58 / 100 — Moderate Foundation</span>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill meter-blue" style="width: 58%;"></div>
-          </div>
-        </div>
-
-        <!-- 3. Technical SEO & GEO -->
-        <div class="growth-meter-item">
-          <div class="meter-label-row">
-            <span class="meter-name">Technical SEO & AI Search Indexing (GEO)</span>
-            <span class="meter-score">34 / 100 — Underdeveloped Lever</span>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill meter-amber" style="width: 34%;"></div>
-          </div>
-        </div>
-
-        <!-- 4. Paid Retargeting -->
-        <div class="growth-meter-item">
-          <div class="meter-label-row">
-            <span class="meter-name">Paid Retargeting & Audience Remarketing</span>
-            <span class="meter-score">12 / 100 — Severe Leak / Untapped</span>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill meter-rose" style="width: 12%;"></div>
+            <div class="meter-fill meter-rose" style="width: 5%;"></div>
           </div>
         </div>
       </div>
 
       <p class="companion-text">
-        <strong>Strategic Pitch Rationale:</strong> While organic brand authority is high, plugging conversion leaks in paid retargeting and AI schema yields the highest short-term ROI for outreach.</p>
+        <strong>Strategic Pitch Rationale:</strong> Syncly is generating high-intent traffic via Thomson Reuters ecosystem media, but syncly.video has 0 tracking pixels, missing header tags, and no lead capture mechanisms. Resolving basic technical SEO and conversion tracking is the highest-ROI opportunity to monetize their active ecosystem PR.</p>
     </div>
 
-    <!-- 8. Outreach Angle & Message Starter (New Section) -->
+    <!-- 8. Outreach Angle & Message Starter -->
     <div class="card">
       <div class="section-header">
         <span class="section-title">Recommended Outreach Strategy</span>
@@ -1036,17 +1099,16 @@
 
       <div style="margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-          <span class="outreach-angle-tag">Paid Retargeting &amp; Full-Funnel Tracking Setup</span>
-          <span style="font-size: 11.5px; color: var(--text-tertiary);">Derived from lowest scored lever (12/100)</span>
+          <span class="outreach-angle-tag">Ecosystem Traffic Capture &amp; Technical SEO Foundation</span>
         </div>
         <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
-          <strong>Why this angle:</strong> Syncly generates high organic site traffic but currently lacks Meta retargeting pixels, causing non-converting visitors to bounce without re-engagement.</p>
+          <strong>Why this angle:</strong> Partner press via Thomson Reuters is driving interest, but the absence of site tracking, CTA forms, and basic metadata prevents turning high-intent traffic into qualified pipeline.</p>
       </div>
 
       <!-- Copyable Message Box -->
       <div class="message-draft-box">
         <div class="draft-header">
-          <span class="draft-label">Draft Outreach Message // Personalized for Marketing Leader</span>
+          <span class="draft-label">Draft Cold Outreach Message // Personalized for Syncly Leadership</span>
           <button class="copy-btn" onclick="copyMessage()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -1055,16 +1117,7 @@
             <span id="copyBtnText">Copy Message</span>
           </button>
         </div>
-        <div id="outreachMessageText" class="draft-content">Hi Marketing Leader,
-
-I was reviewing Syncly&#x27;s digital presence and loved your current product positioning.
-
-I ran a quick technical audit on your web stack and noticed your site is currently missing Meta retargeting pixels, meaning high-intent visitors are dropping off uncaptured.
-
-I drafted a 5-point teardown showing how to plug this traffic leak and recover lost pipeline. Would you like me to send it across?
-
-Best,
-[Your Name]</div>
+        <div id="outreachMessageText" class="draft-content">Hi Syncly Leadership, seeing your recent integration updates alongside Thomson Reuters HighQ and CoCounsel indicates strong momentum in the legal governance space. However, a scan of syncly.video shows missing H1 tags, zero metadata, and no deployed analytics or retargeting pixels—meaning inbound traffic generated by partner press isn&#x27;t being captured or retargeted. We specialize in fixing core web conversion infrastructure for legal tech platforms to ensure zero partner referral pipeline is wasted. Worth a 10-minute discussion to review the site audit?</div>
       </div>
     </div>
 
@@ -1080,74 +1133,25 @@ Best,
           <span class="job-location">Fractional Outreach Candidate</span>
         </div>
       </div>
-        <div class="job-item">
-          <span class="job-role">Product Marketing Lead</span>
-          <span class="job-location">San Francisco, CA</span>
-        </div>
-        <div class="job-item">
-          <span class="job-role">Growth Content Strategist</span>
-          <span class="job-location">Remote — Global</span>
-        </div>
-      </div>
     </div>
 
-    <!-- 10. Target Decision Makers (Supports 1–3 Contacts) -->
+    <!-- 10. Target Decision Makers -->
     <div class="card">
       <div class="section-header">
-        <span class="section-title">Target Decision Makers (1 Identified)</span>
+        <span class="section-title">Target Decision Makers (1 Available)</span>
       </div>
       <div class="dm-list">
 
-        <div class="dm-card">
+        <div class="dm-card" style="border: 1px dashed var(--border-medium);">
           <div class="dm-info">
-            <div class="dm-avatar">SM</div>
+            <div class="dm-avatar" style="background: rgba(15, 118, 110, 0.10); color: #0F766E;">🔍</div>
             <div>
-              <div class="dm-name">Syncly Marketing Leadership</div>
-              <div class="dm-title">VP of Marketing / Head of Growth</div>
-              <div style="margin-top: 4px; font-size: 11.5px; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary);"><a href="mailto:syncly.leadership@syncly.video" style="color: var(--accent-teal); text-decoration: none;">syncly.leadership@syncly.video</a> <span style="font-size: 9.5px; padding: 1px 5px; border-radius: 3px; background: rgba(15, 118, 110, 0.10); color: var(--accent-teal); font-weight: 500;">Unverified</span></div>
+              <div class="dm-name">Find Syncly Marketing Decision Makers</div>
+              <div class="dm-title">Live LinkedIn Sales Navigator & People Search Query</div>
             </div>
           </div>
-          <a href="https://www.linkedin.com/search/results/people/?keywords=Syncly%20Head%20of%20Marketing%20OR%20VP%20Marketing%20OR%20Founder" target="_blank" class="dm-action-btn">
-            <span>View Profile</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </a>
-        </div>
-      </div>
-            <div>
-              <div class="dm-name">Elena Rostova</div>
-              <div class="dm-title">VP of Marketing & Growth</div>
-            </div>
-          </div>
-          <a href="https://linkedin.com" target="_blank" class="dm-action-btn">
-            <span>View Profile</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </a>
-        </div>
-
-        <!-- Contact 2 -->
-        <div class="dm-card">
-          <div class="dm-info">
-            <div class="dm-avatar">MT</div>
-            <div>
-              <div class="dm-name">Marcus Thorne</div>
-              <div class="dm-title">Head of Demand Generation</div>
-            </div>
-          </div>
-          <a href="https://linkedin.com" target="_blank" class="dm-action-btn">
-            <span>View Profile</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
+          <a href="https://www.linkedin.com/search/results/people/?keywords=Syncly%20Head%20of%20Marketing%20OR%20VP%20Marketing%20OR%20Founder" target="_blank" class="dm-action-btn" style="background: #0F766E; color: #FFFFFF; border-color: #0F766E;">
+            <span>Search Decision Makers on LinkedIn ↗</span>
           </a>
         </div>
       </div>
@@ -1166,8 +1170,8 @@ Best,
           labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
           datasets: [{
             label: 'Estimated Posts / Week',
-            data: [4.0, 2.5, 0.2, 0.0, 0.0, 0.0],
-            backgroundColor: ["#3B5F8A", "#5C5648", "#B8483F", "#A85A94", "#EDE3D3", "#EDE3D3"],
+            data: [1.5, 0.3, 0.1, 0.0, 0.0, 0.0],
+            backgroundColor: ["#3B5F8A", "#B45309", "#B45309", "#B45309", "#EDE3D3", "#EDE3D3"],
             borderColor: [
               'rgba(59, 95, 138, 0.3)',
               'rgba(92, 86, 72, 0.3)',
