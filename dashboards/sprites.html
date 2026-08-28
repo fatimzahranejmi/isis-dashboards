@@ -412,11 +412,11 @@
     .coherence-box {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       background: var(--bg-surface-raised);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      padding: 14px 16px;
+      padding: 16px;
       margin-top: 4px;
     }
 
@@ -424,6 +424,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .coherence-score-badge {
@@ -441,15 +443,81 @@
     }
 
     .coherence-status-pill {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
     }
 
     .coherence-critique-text {
       font-size: 13px;
       color: var(--text-secondary);
       line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
     }
 
     /* Executive Briefing */
@@ -934,10 +1002,39 @@
       </div>
       <div class="coherence-box">
         <div class="coherence-header-row">
-          <span class="coherence-status-pill">Moderate Alignment</span>
-          <span class="coherence-score-badge">Coherence Score: 7.8 / 10</span>
+          <span class="coherence-status-pill">Strong Cross-Channel Alignment</span>
+          <span class="coherence-score-badge">Coherence Score: 8.8 / 10</span>
         </div>
-        <p class="coherence-critique-text">Sprites communicates a consistent core message on its primary domain. However, secondary channel presence is fragmented, leaving untapped opportunities to reinforce their core value proposition across long-form video and social.</p>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">High Consistency</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Active Multi-Channel Presence</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">Unified ICP &amp; Voice</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">Sprites maintains a recognizable core value proposition on its primary domain. However, secondary channel engagement is uneven, leaving opportunities to reinforce their core problem-solving narrative across long-form video and educational search.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Minor narrative drift between high-level brand slogans and technical product documentation.</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Repurpose high-performing website value propositions into regular LinkedIn thought leadership and YouTube product walkthroughs to create an airtight multi-channel narrative.</p>
+        </div>
       </div>
     </div>
 
@@ -957,7 +1054,7 @@
           <span>Strategic Pitch Angles</span>
         </div>
         <ul class="panel-list">
-<li class="panel-item opportunity-item">🚀 Fractional Marketing Support: 'I saw your business is scaling, but there are no dedicated in-house marketing listings open. I help fast-growing teams execute high-impact campaigns on a flexible, fractional basis.'</li><li class="panel-item opportunity-item">🎯 Paid Social Retargeting: 'I ran a quick pixel check and noticed you don't have a Meta pixel active on your site. You are missing out on retargeting visitors who leave without converting.'</li><li class="panel-item opportunity-item">🔍 SEO & AI Discovery Fix: 'When running a technical check on your site, I noticed opportunities to improve your OpenGraph preview tags and add structured schema data so AI engines (ChatGPT/Perplexity) accurately index your products.'</li><li class="panel-item opportunity-item">📰 PR / Recent Event Icebreaker: 'Congrats on the recent coverage: "Fortnite Chapter 7 Season 4 Will Have 112 Sprites and 7 Variants, Leak Claims - VICE"! Loved seeing your momentum in the industry.'</li>
+<li class="panel-item opportunity-item">🚀 Fractional Marketing Support: 'I saw your business is scaling, but there are no dedicated in-house marketing listings open. I help fast-growing teams execute high-impact campaigns on a flexible, fractional basis.'</li><li class="panel-item opportunity-item">🎯 Paid Social Retargeting: 'I ran a quick pixel check and noticed you don't have a Meta pixel active on your site. You are missing out on retargeting visitors who leave without converting.'</li><li class="panel-item opportunity-item">🔍 SEO & AI Discovery Fix: 'When running a technical check on your site, I noticed opportunities to improve your OpenGraph preview tags and add structured schema data so AI engines (ChatGPT/Perplexity) accurately index your products.'</li><li class="panel-item opportunity-item">📰 PR / Recent Event Icebreaker: 'Congrats on the recent coverage: "All New Fortnite Sprites Added in Today’s Update (August 27) - vice.com"! Loved seeing your momentum in the industry.'</li>
         </ul>
       </div>
     </div>
