@@ -412,11 +412,11 @@
     .coherence-box {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       background: var(--bg-surface-raised);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      padding: 14px 16px;
+      padding: 16px;
       margin-top: 4px;
     }
 
@@ -424,6 +424,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .coherence-score-badge {
@@ -441,15 +443,81 @@
     }
 
     .coherence-status-pill {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
     }
 
     .coherence-critique-text {
       font-size: 13px;
       color: var(--text-secondary);
       line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
     }
 
     /* Executive Briefing */
@@ -861,7 +929,7 @@
         </div>
         <div class="tier-wrapper">
           <div class="badge-tier"><span class="badge-dot"></span>Tier 2 (Medium Potential)</div>
-          <span class="tier-rationale">Tier B classification is driven by strong seed funding ($4.5M) and active retargeting pixels, offset by critical technical SEO omissions and zero open marketing headcount.</span>
+          <span class="tier-rationale">Tier B rating reflects solid seed capital ($4.5M) and active paid tracking pixels, counterbalanced by foundational web infrastructure gaps and zero dedicated marketing headcount.</span>
         </div>
       </div>
       <a href="https://uplane.ai" target="_blank" class="website-link">uplane.ai<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
@@ -877,14 +945,14 @@
         </svg>
         What They Do & Core Value Proposition
       </span>
-      <p class="what-they-do-text">Uplane builds an AI-powered performance marketing platform designed to automate campaign strategy and execution, helping growth-stage businesses replace traditional digital marketing agencies.</p>
+      <p class="what-they-do-text">Uplane develops an AI-driven performance marketing platform designed to automate ad campaign execution and optimize growth channels for businesses, positioning itself as an automated replacement for traditional marketing agencies.</p>
     </div>
 
     <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
     <div class="overview-grid">
       <div class="basic-summary-box">
         <span class="overview-label">Commercial Market Posture</span>
-        <p class="basic-summary-text">Backed by a $4.5M seed round, Uplane possesses strong commercial positioning in the AI ad-tech space, but suffers from severe technical SEO and AI engine visibility leaks on its primary domain.</p>
+        <p class="basic-summary-text">Uplane is an early-stage AI marketing startup backed by a $4.5M seed round with strong media presence, but their digital footprint suffers from critical technical SEO and Generative Engine Optimization (GEO) omissions.</p>
       </div>
 
       <div class="sector-box">
@@ -892,7 +960,7 @@
         <div>
           <span class="sector-tag">B2B SaaS — AI Marketing Automation</span>
         </div>
-        <p class="sector-text">High-velocity category where buyers heavily utilize AI answer engine searches and organic technical proof to evaluate software vendors over legacy agencies.</p>
+        <p class="sector-text">Hyper-competitive martech landscape where technical organic search authority and AI answer engine visibility dictate client acquisition costs.</p>
       </div>
     </div>
 
@@ -924,7 +992,7 @@
       <div class="section-header">
         <span class="section-title">Executive Briefing</span>
       </div>
-      <p class="executive-text">Uplane has secured strong market positioning following a $4.5M raise to disrupt legacy digital marketing agencies. The company actively leverages Meta and LinkedIn tracking pixels alongside Intercom to capture traffic, indicating an active paid/conversion push. However, critical underlying web infrastructure is compromised: 74 images lack alt text, no public sitemap exists, and missing JSON-LD structured data renders the site largely invisible to AI answer engines like Perplexity and ChatGPT. Operating with a lean marketing team, Uplane requires automated or fractional fixes to plug these high-intent organic leaks.</p>
+      <p class="executive-text">Uplane has earned strong commercial momentum following its $4.5M funding announcement. Despite implementing baseline tracking tags (Meta Pixel, LinkedIn Insight Tag) and running active social accounts, the company has critical technical conversion leaks. The domain currently lacks a public sitemap.xml, robots.txt routing, alt tags, and JSON-LD schema. With an active careers page but zero open marketing positions, Uplane requires immediate fractional technical SEO support to maximize organic and AI-driven inbound conversion.</p>
     </div>
 
     <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
@@ -934,10 +1002,39 @@
       </div>
       <div class="coherence-box">
         <div class="coherence-header-row">
-          <span class="coherence-status-pill">Moderate Alignment with Technical Gaps</span>
-          <span class="coherence-score-badge">Coherence Score: 7.0 / 10</span>
+          <span class="coherence-status-pill">Moderate Channel Presence with Technical Gaps</span>
+          <span class="coherence-score-badge">Coherence Score: 6.5 / 10</span>
         </div>
-        <p class="coherence-critique-text">The high-level narrative around replacing marketing agencies with AI is consistent across PR coverage and landing page messaging. However, brand authority drops on technical execution: a marketing automation provider missing schema markup and basic sitemaps signals an internal disconnect between product messaging and site ops.</p>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">Moderate Consistency</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Broad Footprint, Underutilized Assets</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">B2B Agency Disruptor Positioning</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">Uplane presents a bold disruption narrative across business press, positioning its software as an AI replacement for traditional ad agencies. However, their primary web ecosystem fails to support this high-tech authority—completely lacking JSON-LD structured data necessary for AI engine recommendations (ChatGPT, Perplexity). While maintaining profiles across LinkedIn, X, Instagram, YouTube, and TikTok, the core landing page relies exclusively on Intercom chat and basic CTAs without static lead capture forms or alt-tagged product imagery.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>AI agency replacement narrative is undermined by zero Schema.org structured data, leaving the product invisible to AI search recommendation engines.</li><li>Landing page relies solely on Intercom popups and lacks dedicated lead capture forms for top-of-funnel content conversion.</li><li>100% of website images (74 of 74) lack alt text tags, blocking high-intent organic image search indexing.</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Implement Schema.org markup and image metadata across uplane.ai to ensure search crawlers and AI answer engines accurately index Uplane as the premier AI agency alternative.</p>
+        </div>
       </div>
     </div>
 
@@ -998,7 +1095,7 @@
         <div class="channel-card">
           <div class="channel-card-top">
             <span class="channel-name-tag">Instagram</span>
-            <span class="status-pill status-dormant">Dormant</span>
+            <span class="status-pill status-active">Active</span>
           </div>
           <div><a href="https://www.instagram.com/uplane" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
         </div>
@@ -1006,7 +1103,7 @@
         <div class="channel-card">
           <div class="channel-card-top">
             <span class="channel-name-tag">TikTok</span>
-            <span class="status-pill status-inactive">Inactive</span>
+            <span class="status-pill status-dormant">Dormant</span>
           </div>
           <div><a href="https://www.tiktok.com/@uplane" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
         </div>
@@ -1033,7 +1130,7 @@
           <canvas id="postingFrequencyChart"></canvas>
         </div>
         <p class="companion-text">
-          <strong>Channel Activity Interpretation:</strong> Distribution is focused on corporate B2B channels (LinkedIn, X), while visual channels remain underutilized despite performance marketing being an inherently visual domain.</p>
+          <strong>Channel Activity Interpretation:</strong> Uplane spreads social distribution across multiple platforms but underutilizes video-first channels (YouTube/TikTok) that are essential for showcasing AI software product demos.</p>
       </div>
     </div>
 
@@ -1047,7 +1144,7 @@
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Paid Conversion Tracking &amp; Retargeting Infrastructure</span>
+            <span class="meter-name">PR &amp; B2B Social Positioning</span>
             <span class="meter-score">75 / 100 — Strong Existing Channel</span>
           </div>
           <div class="meter-track">
@@ -1057,7 +1154,7 @@
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Inbound Blog Portal</span>
+            <span class="meter-name">Paid Conversion Pixel Infrastructure</span>
             <span class="meter-score">60 / 100 — Moderate Foundation</span>
           </div>
           <div class="meter-track">
@@ -1067,27 +1164,27 @@
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Organic B2B Social Presence</span>
-            <span class="meter-score">50 / 100 — Moderate Foundation</span>
+            <span class="meter-name">Technical Web Infrastructure &amp; Sitemap</span>
+            <span class="meter-score">30 / 100 — Underdeveloped Lever</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-amber" style="width: 50%;"></div>
+            <div class="meter-fill meter-amber" style="width: 30%;"></div>
           </div>
         </div>
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Technical SEO &amp; Generative Engine Optimization (GEO)</span>
-            <span class="meter-score">20 / 100 — Severe Leak / Untapped</span>
+            <span class="meter-name">AI Search Indexing (GEO) &amp; Structured Data</span>
+            <span class="meter-score">15 / 100 — Severe Leak / Untapped</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-rose" style="width: 20%;"></div>
+            <div class="meter-fill meter-rose" style="width: 15%;"></div>
           </div>
         </div>
       </div>
 
       <p class="companion-text">
-        <strong>Strategic Pitch Rationale:</strong> Uplane&#x27;s lowest performing growth vector is Generative Engine Optimization (GEO) and technical web structure. For a platform marketing itself as an AI performance tool, lacking schema markup and proper search engine crawling instructions blocks them from appearing in AI-driven buyer queries.</p>
+        <strong>Strategic Pitch Rationale:</strong> While Uplane has strong PR momentum surrounding its $4.5M seed round, the platform is virtually invisible to AI answer engines due to a complete lack of JSON-LD schema. Remedying these technical infrastructure gaps will allow Uplane to capture high-intent inbound search traffic automatically.</p>
     </div>
 
     <!-- 8. Outreach Angle & Message Starter -->
@@ -1099,10 +1196,10 @@
 
       <div style="margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-          <span class="outreach-angle-tag">Generative Engine Optimization (GEO) &amp; Indexation Gap Fix</span>
+          <span class="outreach-angle-tag">AI Search Indexing (GEO) &amp; Technical SEO Infrastructure</span>
         </div>
         <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
-          <strong>Why this angle:</strong> Uplane lacks basic JSON-LD schema, missing alt text on 74 images, and has no sitemap.xml, preventing AI models and search engines from indexing their agency-replacement platform properly.</p>
+          <strong>Why this angle:</strong> As an AI company positioning itself as an agency replacement, Uplane must be structured so that AI engines (Perplexity, ChatGPT, Claude) cite and recommend uplane.ai to prospective buyers.</p>
       </div>
 
       <!-- Copyable Message Box -->
@@ -1119,11 +1216,11 @@
         </div>
         <div id="outreachMessageText" class="draft-content">Hi Uplane Leadership,
 
-Congrats on the $4.5M raise—positioning Uplane to replace legacy marketing agencies via AI is a massive narrative.
+Congrats on raising $4.5M to replace traditional marketing agencies with AI. As an AI-first platform, Uplane should be the top recommendation when potential buyers ask tools like Perplexity or ChatGPT for automated agency alternatives. However, uplane.ai currently lacks JSON-LD schema markup and a public sitemap.xml.
 
-While running a growth audit on uplane.ai, I noticed a major technical gap: your site currently lacks Schema.org JSON-LD data, has no detected sitemap.xml, and leaves 74 images without alt tags. For an AI marketing platform, this prevents LLM-based search tools like ChatGPT and Perplexity from parsing and recommending your platform when founders search for &#x27;AI performance marketing software.&#x27;
+Additionally, all 74 images on your site are missing alt text, leaving high-intent search traffic on the table. We help venture-backed B2B tech platforms fix these technical leaks and execute Generative Engine Optimization (GEO).
 
-We specialize in Technical SEO and Generative Engine Optimization (GEO) to ensure fast-growing SaaS platforms capture zero-click AI search traffic. Open to seeing the quick 5-minute technical breakdown?</div>
+Would you be open to a 10-minute technical audit showing how to index Uplane across major AI answer engines?</div>
       </div>
     </div>
 
@@ -1176,8 +1273,8 @@ We specialize in Technical SEO and Generative Engine Optimization (GEO) to ensur
           labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
           datasets: [{
             label: 'Estimated Posts / Week',
-            data: [3.0, 2.0, 0.3, 0.0, 0.0, 0.0],
-            backgroundColor: ["#3B5F8A", "#5C5648", "#B45309", "#B45309", "#EDE3D3", "#EDE3D3"],
+            data: [3.0, 2.0, 0.3, 1.0, 0.2, 0.0],
+            backgroundColor: ["#3B5F8A", "#5C5648", "#B45309", "#A85A94", "#B45309", "#EDE3D3"],
             borderColor: [
               'rgba(59, 95, 138, 0.3)',
               'rgba(92, 86, 72, 0.3)',
