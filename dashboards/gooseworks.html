@@ -412,11 +412,11 @@
     .coherence-box {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       background: var(--bg-surface-raised);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      padding: 14px 16px;
+      padding: 16px;
       margin-top: 4px;
     }
 
@@ -424,6 +424,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .coherence-score-badge {
@@ -441,15 +443,81 @@
     }
 
     .coherence-status-pill {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
     }
 
     .coherence-critique-text {
       font-size: 13px;
       color: var(--text-secondary);
       line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
     }
 
     /* Executive Briefing */
@@ -861,7 +929,7 @@
         </div>
         <div class="tier-wrapper">
           <div class="badge-tier"><span class="badge-dot"></span>Tier 2 (Medium Potential)</div>
-          <span class="tier-rationale">Classified as Tier B due to solid market positioning in AI tooling countered by zero tracking infrastructure and complete absence of retargeting mechanisms.</span>
+          <span class="tier-rationale">Tier B classification driven by high-value product category and prime domain ownership (goose.ai) offset by complete absence of conversion tracking pixels and structured SEO/GEO data.</span>
         </div>
       </div>
       <a href="https://goose.ai" target="_blank" class="website-link">goose.ai<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
@@ -877,30 +945,30 @@
         </svg>
         What They Do & Core Value Proposition
       </span>
-      <p class="what-they-do-text">GooseAI (Gooseworks) builds AI agent development tools and infrastructure for software engineers to create, deploy, and scale autonomous workflows. Their platform simplifies complex LLM orchestrations into production-ready AI applications.</p>
+      <p class="what-they-do-text">Gooseworks (GooseAI) builds an artificial intelligence platform designed to streamline custom AI deployment and workflow automation for developers and enterprise teams. Their technology allows organizations to integrate agentic AI solutions without managing underlying infrastructure.</p>
     </div>
 
     <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
     <div class="overview-grid">
       <div class="basic-summary-box">
         <span class="overview-label">Commercial Market Posture</span>
-        <p class="basic-summary-text">GooseAI possesses active organic social distribution on developer-centric networks, but suffers from critical technical SEO and tracking gaps that waste incoming web traffic.</p>
+        <p class="basic-summary-text">Gooseworks holds strong domain positioning with GooseAI, but suffers from severe technical marketing execution leaks including zero retargeting capabilities, missing search metadata, and absent inbound content infrastructure.</p>
       </div>
 
       <div class="sector-box">
         <span class="overview-label">Sector Context</span>
         <div>
-          <span class="sector-tag">B2B SaaS — AI Infrastructure &amp; Developer Tools</span>
+          <span class="sector-tag">B2B SaaS — Artificial Intelligence &amp; Developer Infrastructure</span>
         </div>
-        <p class="sector-text">Highly competitive developer tooling market where buyer trust relies heavily on indexable technical documentation and seamless search engine discovery.</p>
+        <p class="sector-text">Hyper-competitive developer-focused sector where organic search indexation, technical authority, and fast retargeting loops drive customer acquisition.</p>
       </div>
     </div>
 
     <!-- 2c. Firmographics Stats Row -->
     <div class="firmographics-card">
       <div class="firmographic-stat"><span class="stat-label">Employee Count</span><span class="stat-value">11 – 50 employees</span></div>
-      <div class="firmographic-stat"><span class="stat-label">Funding & Stage</span><span class="stat-value">Seed ($3.5M raised)</span></div>
-      <div class="firmographic-stat"><span class="stat-label">Founded Year</span><span class="stat-value">2023</span></div>
+      <div class="firmographic-stat"><span class="stat-label">Funding & Stage</span><span class="stat-value">Seed / Early Stage (Undisclosed)</span></div>
+      <div class="firmographic-stat"><span class="stat-label">Founded Year</span><span class="stat-value">2022</span></div>
     </div>
 
     <!-- 3. Score Overview -->
@@ -924,7 +992,7 @@
       <div class="section-header">
         <span class="section-title">Executive Briefing</span>
       </div>
-      <p class="executive-text">GooseAI drives top-of-funnel interest through developer communities and social platforms, but its web infrastructure is leaking high-intent leads. Without tracking pixels installed, non-converting visitors bounce without being retargeted. Additionally, the lack of structured Schema.org data and sitemap makes the product virtually invisible to generative AI search engines like Perplexity and ChatGPT.</p>
+      <p class="executive-text">Gooseworks operates in a high-demand B2B AI category but is currently burning warm inbound intent due to basic technical infrastructure oversights. The website lacks conversion pixels (Meta Pixel, LinkedIn Insight Tag), rendering inbound visitor traffic un-retargetable. Additionally, missing JSON-LD structured data prevents generative AI search bots from indexing their feature set. Launching tracking infrastructure, an AI Search Engine Optimization (GEO) initiative, and a dedicated developer content engine represents their highest-leverage commercial opportunity.</p>
     </div>
 
     <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
@@ -934,10 +1002,39 @@
       </div>
       <div class="coherence-box">
         <div class="coherence-header-row">
-          <span class="coherence-status-pill">Fragmented Technical Foundation</span>
+          <span class="coherence-status-pill">Moderate Messaging Fragmentation</span>
           <span class="coherence-score-badge">Coherence Score: 5.5 / 10</span>
         </div>
-        <p class="coherence-critique-text">While social channels push product awareness, the core site goose.ai lacks a meta description and JSON-LD schema. This disconnect causes search engines and AI assistants to display unoptimized snippets, undercutting the brand&#x27;s position as an advanced AI platform.</p>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">Moderate Consistency</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Fragmented Social Footprint</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">Misaligned Brand Positioning</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">While the primary site goose.ai establishes a high-tech B2B software narrative around GooseAI, public search indices reflect ambiguity due to unoptimized metadata and brand overlap with legacy entities. The brand completely lacks a technical blog or content hub, leaving a critical narrative void for enterprise buyers seeking technical proof points. Social channels exist but lack unified content scheduling and structured value proposition delivery.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Website lacks meta descriptions and JSON-LD schema, resulting in unoptimized snippets in Google and opacity in AI search engines (Perplexity/ChatGPT)</li><li>Zero blog or documentation hub available to validate technical enterprise capabilities and product architecture</li><li>Social footprint spans multiple platforms (X, YouTube, LinkedIn) without a clear, centralized B2B thought leadership narrative</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Deploy JSON-LD enterprise schema on goose.ai to unify brand identity across AI crawlers and search engines, while consolidating social messaging around technical developer tutorials on YouTube and LinkedIn.</p>
+        </div>
       </div>
     </div>
 
@@ -1027,13 +1124,13 @@
       <div style="margin-top: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
-          <span class="data-window-caption">Estimated from public posts, last 90 days</span>
+          <span class="data-window-caption">Estimated from public social activity, last 90 days</span>
         </div>
         <div class="chart-container">
           <canvas id="postingFrequencyChart"></canvas>
         </div>
         <p class="companion-text">
-          <strong>Channel Activity Interpretation:</strong> Activity is properly focused on X and LinkedIn for developer adoption, but traffic generated from these channels hits an unmonitored site without a blog or retargeting setup.</p>
+          <strong>Channel Activity Interpretation:</strong> Social distribution relies on sporadic text updates on X and LinkedIn while high-converting B2B formats—such as technical YouTube deep-dives and developer blog posts—are completely unutilized.</p>
       </div>
     </div>
 
@@ -1048,37 +1145,37 @@
         <div class="growth-meter-item">
           <div class="meter-label-row">
             <span class="meter-name">Organic B2B Social &amp; Thought Leadership</span>
-            <span class="meter-score">70 / 100 — Active Front</span>
+            <span class="meter-score">45 / 100 — Moderate Foundation</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-teal" style="width: 70%;"></div>
-          </div>
-        </div>
-
-        <div class="growth-meter-item">
-          <div class="meter-label-row">
-            <span class="meter-name">Inbound Content &amp; Educational Resources</span>
-            <span class="meter-score">25 / 100 — Severe Deficit</span>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill meter-blue" style="width: 25%;"></div>
+            <div class="meter-fill meter-teal" style="width: 45%;"></div>
           </div>
         </div>
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
             <span class="meter-name">Technical SEO &amp; AI Search Indexing (GEO)</span>
-            <span class="meter-score">20 / 100 — Invisible to AI Search</span>
+            <span class="meter-score">20 / 100 — Severe Leak / Untapped</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-amber" style="width: 20%;"></div>
+            <div class="meter-fill meter-blue" style="width: 20%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Inbound Content &amp; Educational Resources</span>
+            <span class="meter-score">15 / 100 — Severe Deficit</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-amber" style="width: 15%;"></div>
           </div>
         </div>
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
             <span class="meter-name">Paid Retargeting &amp; Audience Remarketing</span>
-            <span class="meter-score">0 / 100 — Zero Infrastructure</span>
+            <span class="meter-score">0 / 100 — Critical Vulnerability</span>
           </div>
           <div class="meter-track">
             <div class="meter-fill meter-rose" style="width: 0%;"></div>
@@ -1087,7 +1184,7 @@
       </div>
 
       <p class="companion-text">
-        <strong>Strategic Pitch Rationale:</strong> GooseAI&#x27;s zero-score retargeting and low GEO scores present an immediate growth wedge. Implementing tracking pixels and JSON-LD structured data will plug pipeline leaks and capture demand already being generated by their active social outreach.</p>
+        <strong>Strategic Pitch Rationale:</strong> With a 0/100 score in conversion remarketing and a 20/100 in technical SEO, Gooseworks is losing intent at both ends of the funnel. Implementing basic tracking tags and JSON-LD schema yields immediate recovery of existing lost site traffic without requiring additional ad spend.</p>
     </div>
 
     <!-- 8. Outreach Angle & Message Starter -->
@@ -1099,10 +1196,10 @@
 
       <div style="margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-          <span class="outreach-angle-tag">Conversion Leak Infrastructure &amp; AI Search Visibility Fix</span>
+          <span class="outreach-angle-tag">Technical Funnel Optimization &amp; Generative Engine Indexing (GEO)</span>
         </div>
         <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
-          <strong>Why this angle:</strong> GooseAI generates high interest via social platforms, but lacks basic pixel tracking and JSON-LD schema, resulting in wasted ad potential and invisibility on AI search tools.</p>
+          <strong>Why this angle:</strong> Directly targets verified technical gaps on goose.ai: missing tracking pixels, missing schema data, and unindexed search metadata.</p>
       </div>
 
       <!-- Copyable Message Box -->
@@ -1117,7 +1214,11 @@
             <span id="copyBtnText">Copy Message</span>
           </button>
         </div>
-        <div id="outreachMessageText" class="draft-content">Hi Gooseworks Leadership, caught GooseAI&#x27;s growth across X and LinkedIn. Under the hood of goose.ai, there are key conversion leaks: missing tracking pixels mean bouncing visitors leave unmonitored, and a lack of JSON-LD schema prevents AI search engines like Perplexity from indexing your product. Plugging these technical gaps will instantly recapture lost signups from your existing social push. Open to reviewing a quick 3-minute technical audit on how to resolve this?</div>
+        <div id="outreachMessageText" class="draft-content">Hi Gooseworks Leadership,
+
+I was reviewing goose.ai and noticed strong product momentum around GooseAI, but high-intent visitors are currently slipping through the cracks. The site is running without conversion tracking pixels (LinkedIn or Meta Pixel) and lacks JSON-LD schema, meaning modern AI search engines like Perplexity and ChatGPT cannot properly index your platform capabilities.
+
+We specialize in fixing technical funnel leaks and optimizing AI search engine visibility for growth-stage B2B AI companies. Would you be open to a 10-minute technical teardown showing how to capture this unmonetized traffic?</div>
       </div>
     </div>
 
@@ -1170,7 +1271,7 @@
           labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
           datasets: [{
             label: 'Estimated Posts / Week',
-            data: [3.0, 4.5, 0.3, 0.2, 0.0, 0.0],
+            data: [1.5, 2.0, 0.1, 0.0, 0.0, 0.0],
             backgroundColor: ["#3B5F8A", "#5C5648", "#B45309", "#B45309", "#EDE3D3", "#EDE3D3"],
             borderColor: [
               'rgba(59, 95, 138, 0.3)',
