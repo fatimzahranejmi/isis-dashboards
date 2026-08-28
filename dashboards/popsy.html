@@ -412,11 +412,11 @@
     .coherence-box {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       background: var(--bg-surface-raised);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      padding: 14px 16px;
+      padding: 16px;
       margin-top: 4px;
     }
 
@@ -424,6 +424,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .coherence-score-badge {
@@ -441,15 +443,81 @@
     }
 
     .coherence-status-pill {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
     }
 
     .coherence-critique-text {
       font-size: 13px;
       color: var(--text-secondary);
       line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
     }
 
     /* Executive Briefing */
@@ -861,7 +929,7 @@
         </div>
         <div class="tier-wrapper">
           <div class="badge-tier"><span class="badge-dot"></span>Tier 3 (Low Potential)</div>
-          <span class="tier-rationale">Classified as Tier C due to a critical website HTTP 404 outage, zero detected conversion pixels or lead capture tools, and non-existent hiring signals.</span>
+          <span class="tier-rationale">Classified as Tier C due to primary domain unavailability (HTTP 404 error), total absence of marketing tracking infrastructure, and zero hiring activity.</span>
         </div>
       </div>
       <a href="https://popsy.ai" target="_blank" class="website-link">popsy.ai<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
@@ -877,22 +945,22 @@
         </svg>
         What They Do & Core Value Proposition
       </span>
-      <p class="what-they-do-text">Popsy builds a no-code AI website builder that enables creators, freelancers, and small businesses to generate and publish custom websites using a Notion-like editing interface.</p>
+      <p class="what-they-do-text">Popsy builds an AI-powered no-code website creator that turns Notion pages and text prompts into published websites for creators, freelancers, and startups.</p>
     </div>
 
     <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
     <div class="overview-grid">
       <div class="basic-summary-box">
         <span class="overview-label">Commercial Market Posture</span>
-        <p class="basic-summary-text">Popsy is currently facing severe infrastructure downtime, with its main domain returning a 404 error that halts all top-of-funnel web traffic conversion. Commercial growth is completely stalled until core domain routing, technical SEO, and analytics tracking are restored.</p>
+        <p class="basic-summary-text">Popsy is currently hindered by severe digital infrastructure failures, with its primary website returning an HTTP 404 error despite active social channels. Commercial growth is completely halted by missing lead capture, broken search indexing, and unrouted web traffic.</p>
       </div>
 
       <div class="sector-box">
         <span class="overview-label">Sector Context</span>
         <div>
-          <span class="sector-tag">B2B SaaS — No-Code AI Web Builder</span>
+          <span class="sector-tag">B2B SaaS — No-Code / AI Web Development</span>
         </div>
-        <p class="sector-text">High-velocity, hyper-competitive market targeting creators and solos; customer acquisition relies on seamless self-serve onboarding, strong product-led growth (PLG), and technical search dominance.</p>
+        <p class="sector-text">High-velocity, low-switching-cost market dominated by platforms like Framer and Webflow, requiring reliable uptime and seamless organic discovery.</p>
       </div>
     </div>
 
@@ -924,7 +992,7 @@
       <div class="section-header">
         <span class="section-title">Executive Briefing</span>
       </div>
-      <p class="executive-text">Popsy operates in the competitive AI no-code website building market, but their primary growth mechanism is currently completely disabled due to a 404 server error on popsy.ai. The platform exhibits zero tracking infrastructure (no Meta, Google, or LinkedIn pixels), no lead capture mechanisms, and lacks foundational SEO components like robots.txt and sitemap.xml. Without a functioning web destination or organic content engine, public social engagement cannot be monetized or converted into user acquisition.</p>
+      <p class="executive-text">Popsy exhibits a complete breakdown in digital conversion capability as their target landing page returns a 404 error. Despite establishing social media footprints to capture creator interest, they lack foundational growth ops including analytics tracking pixels, CTAs, and structured JSON-LD data. Without functional web hosting and basic organic search infrastructure, all organic social referral traffic is burned.</p>
     </div>
 
     <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
@@ -934,10 +1002,39 @@
       </div>
       <div class="coherence-box">
         <div class="coherence-header-row">
-          <span class="coherence-status-pill">Critical Infrastructure Failure</span>
+          <span class="coherence-status-pill">Critical Infrastructure &amp; Narrative Disconnect</span>
           <span class="coherence-score-badge">Coherence Score: 2.0 / 10</span>
         </div>
-        <p class="coherence-critique-text">While social channels remain listed, the root domain popsy.ai returns an HTTP 404 error page. This total break between off-site discovery and on-site destination destroys trust and prevents any prospective users from testing the editor.</p>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">Low Consistency</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Fragmented Presence</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">Disconnected</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">While Popsy maintains social handles across X, LinkedIn, Instagram, and TikTok, the core landing page at popsy.ai throws an HTTP 404 error. Social outreach attempts to market a frictionless website builder, but prospective users land on a broken server page. The complete absence of meta tags, JSON-LD schema, and a sitemap prevents search engine indexing and breaks cross-channel brand trust.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Primary domain popsy.ai returns an HTTP 404 server error, severing the top-of-funnel buyer journey.</li><li>Complete lack of tracking pixels or lead capture mechanisms forfeit retargeting opportunities for incoming traffic.</li><li>Missing YouTube channel leaves a gap in product demonstration video search results.</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Immediately restore primary web server availability and implement fundamental tracking tags to retain and convert social media referral traffic.</p>
+        </div>
       </div>
     </div>
 
@@ -974,7 +1071,7 @@
         <div class="channel-card">
           <div class="channel-card-top">
             <span class="channel-name-tag">LinkedIn</span>
-            <span class="status-pill status-dormant">Dormant</span>
+            <span class="status-pill status-active">Active</span>
           </div>
           <div><a href="https://www.linkedin.com/company/popsy" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
         </div>
@@ -998,7 +1095,7 @@
         <div class="channel-card">
           <div class="channel-card-top">
             <span class="channel-name-tag">Instagram</span>
-            <span class="status-pill status-dormant">Dormant</span>
+            <span class="status-pill status-active">Active</span>
           </div>
           <div><a href="https://www.instagram.com/popsy" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
         </div>
@@ -1006,7 +1103,7 @@
         <div class="channel-card">
           <div class="channel-card-top">
             <span class="channel-name-tag">TikTok</span>
-            <span class="status-pill status-dormant">Dormant</span>
+            <span class="status-pill status-active">Active</span>
           </div>
           <div><a href="https://www.tiktok.com/@popsy" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
         </div>
@@ -1027,13 +1124,13 @@
       <div style="margin-top: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
-          <span class="data-window-caption">Estimated from public posts, last 90 days</span>
+          <span class="data-window-caption">Estimated from public signals, last 90 days</span>
         </div>
         <div class="chart-container">
           <canvas id="postingFrequencyChart"></canvas>
         </div>
         <p class="companion-text">
-          <strong>Channel Activity Interpretation:</strong> Social activity is sparsely distributed across X and Instagram, but complete absence on YouTube forfeits high-intent visual search traffic for no-code product tutorials.</p>
+          <strong>Channel Activity Interpretation:</strong> Social posts are concentrated on X and TikTok to reach creators, but zero long-form YouTube tutorials are published to capture high-intent search queries.</p>
       </div>
     </div>
 
@@ -1047,18 +1144,18 @@
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Organic B2B Social &amp; Micro-Community</span>
-            <span class="meter-score">40 / 100 — Moderate Foundation</span>
+            <span class="meter-name">Organic Social &amp; Creator Outreach</span>
+            <span class="meter-score">45 / 100 — Moderate Activity</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-teal" style="width: 40%;"></div>
+            <div class="meter-fill meter-teal" style="width: 45%;"></div>
           </div>
         </div>
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Inbound Content &amp; Educational SEO</span>
-            <span class="meter-score">10 / 100 — Severe Leak / Untapped</span>
+            <span class="meter-name">Inbound Content &amp; Educational Resources</span>
+            <span class="meter-score">10 / 100 — Critical Gap</span>
           </div>
           <div class="meter-track">
             <div class="meter-fill meter-blue" style="width: 10%;"></div>
@@ -1067,18 +1164,18 @@
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Technical SEO &amp; Indexing Architecture</span>
-            <span class="meter-score">5 / 100 — Severe Leak / Untapped</span>
+            <span class="meter-name">Technical SEO &amp; Schema Indexing</span>
+            <span class="meter-score">0 / 100 — Broken / Server Error</span>
           </div>
           <div class="meter-track">
-            <div class="meter-fill meter-amber" style="width: 5%;"></div>
+            <div class="meter-fill meter-amber" style="width: 0%;"></div>
           </div>
         </div>
 
         <div class="growth-meter-item">
           <div class="meter-label-row">
-            <span class="meter-name">Paid Retargeting &amp; Audience Remarketing</span>
-            <span class="meter-score">0 / 100 — Severe Leak / Untapped</span>
+            <span class="meter-name">Paid Retargeting &amp; Lead Capture</span>
+            <span class="meter-score">0 / 100 — Non-existent</span>
           </div>
           <div class="meter-track">
             <div class="meter-fill meter-rose" style="width: 0%;"></div>
@@ -1087,7 +1184,7 @@
       </div>
 
       <p class="companion-text">
-        <strong>Strategic Pitch Rationale:</strong> With technical SEO and infrastructure failing outright (404 error, missing sitemap, missing robots.txt), the immediate growth priority is restoring domain health and deploying fundamental analytics to capture user intent.</p>
+        <strong>Strategic Pitch Rationale:</strong> Popsy scores zero in technical SEO and conversion tracking because popsy.ai currently returns a 404 error, missing sitemaps, and zero pixels. Resolving basic web availability and analytics infrastructure must precede any growth or acquisition initiatives.</p>
     </div>
 
     <!-- 8. Outreach Angle & Message Starter -->
@@ -1099,10 +1196,10 @@
 
       <div style="margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-          <span class="outreach-angle-tag">Infrastructure Recovery &amp; Technical SEO Remediation</span>
+          <span class="outreach-angle-tag">Technical Web Hosting Recovery &amp; Conversion Infrastructure Fix</span>
         </div>
         <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
-          <strong>Why this angle:</strong> Any prospective users arriving at popsy.ai from social channels or referral links are hitting a dead end (404 error), completely shutting down product adoption.</p>
+          <strong>Why this angle:</strong> The primary domain popsy.ai is down (404 Error) and lacks analytics pixels or lead capture forms, destroying conversion rates from existing social activity.</p>
       </div>
 
       <!-- Copyable Message Box -->
@@ -1117,7 +1214,7 @@
             <span id="copyBtnText">Copy Message</span>
           </button>
         </div>
-        <div id="outreachMessageText" class="draft-content">Hi Popsy Leadership, noticed that incoming web traffic to popsy.ai is currently hitting an HTTP 404 error, preventing new users from accessing your AI site builder. On top of the outage, the domain currently lacks active tracking pixels, XML sitemaps, and robots.txt files needed for search indexing. We specialize in fixing core SaaS web infrastructure and technical SEO to recover lost traffic. Open to a quick sync to help get popsy.ai&#x27;s onboarding funnel back online?</div>
+        <div id="outreachMessageText" class="draft-content">Hi Popsy Leadership, I attempted to evaluate popsy.ai to review your AI Notion site-builder workflow, but your main landing page is currently returning an HTTP 404 error. In addition to the outage, there are currently no tracking pixels or JSON-LD schemas configured to capture traffic coming from your X and TikTok accounts. We help SaaS teams fix critical technical SEO and web conversion leaks—are you open to a brief conversation to get popsy.ai online and tracking leads properly?</div>
       </div>
     </div>
 
@@ -1170,8 +1267,8 @@
           labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
           datasets: [{
             label: 'Estimated Posts / Week',
-            data: [0.3, 1.5, 0.0, 0.2, 0.2, 0.0],
-            backgroundColor: ["#B45309", "#5C5648", "#EDE3D3", "#B45309", "#B45309", "#EDE3D3"],
+            data: [1.0, 3.0, 0.0, 1.0, 2.0, 0.0],
+            backgroundColor: ["#3B5F8A", "#5C5648", "#EDE3D3", "#A85A94", "#A85A94", "#EDE3D3"],
             borderColor: [
               'rgba(59, 95, 138, 0.3)',
               'rgba(92, 86, 72, 0.3)',
