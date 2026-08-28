@@ -412,11 +412,11 @@
     .coherence-box {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       background: var(--bg-surface-raised);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      padding: 14px 16px;
+      padding: 16px;
       margin-top: 4px;
     }
 
@@ -424,6 +424,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .coherence-score-badge {
@@ -441,15 +443,81 @@
     }
 
     .coherence-status-pill {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
     }
 
     .coherence-critique-text {
       font-size: 13px;
       color: var(--text-secondary);
       line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
     }
 
     /* Executive Briefing */
@@ -861,7 +929,7 @@
         </div>
         <div class="tier-wrapper">
           <div class="badge-tier"><span class="badge-dot"></span>Tier 2 (Medium Potential)</div>
-          <span class="tier-rationale">Tier B status is driven by a solid core product and active inbound setup, offset by uncaptured retargeting traffic and technical SEO gaps.</span>
+          <span class="tier-rationale">Classified as Tier B due to a strong core adtech value proposition offset by notable technical tracking omissions and untapped remarketing infrastructure.</span>
         </div>
       </div>
       <a href="https://www.vector.co" target="_blank" class="website-link">www.vector.co<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
@@ -877,29 +945,29 @@
         </svg>
         What They Do & Core Value Proposition
       </span>
-      <p class="what-they-do-text">Vector provides contact-level advertising software that enables B2B revenue teams to identify specific account buyers and preview ad target audiences before launching campaigns.</p>
+      <p class="what-they-do-text">Vector develops contact-level advertising software that enables B2B revenue teams to identify real prospective buyers and preview exact targeting lists before running ad campaigns. Their platform solves anonymous traffic drop-off by delivering granular, individual-level targeting for account-based marketing.</p>
     </div>
 
     <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
     <div class="overview-grid">
       <div class="basic-summary-box">
         <span class="overview-label">Commercial Market Posture</span>
-        <p class="basic-summary-text">Vector maintains a clear B2B value proposition in intent-driven advertising but suffers from preventable tracking leaks and image indexing deficiencies. Fixing these conversion gaps will immediately improve funnel performance.</p>
+        <p class="basic-summary-text">Vector holds a clear value proposition in the high-growth B2B adtech sector, but exhibits significant execution gaps in its owned marketing funnel. Their messaging effectively targets demand generation leaders, yet technical conversion leaks hinder pipeline capture.</p>
       </div>
 
       <div class="sector-box">
         <span class="overview-label">Sector Context</span>
         <div>
-          <span class="sector-tag">B2B SaaS — AdTech &amp; Buyer Intent</span>
+          <span class="sector-tag">B2B SaaS — AdTech &amp; Account-Based Marketing (ABM)</span>
         </div>
-        <p class="sector-text">Highly competitive intent advertising market requiring flawless paid remarketing precision and high technical search visibility to maintain cost-effective customer acquisition.</p>
+        <p class="sector-text">Highly competitive B2B intent-data market with short evaluation cycles driven by measurable ROAS and intent accuracy.</p>
       </div>
     </div>
 
     <!-- 2c. Firmographics Stats Row -->
     <div class="firmographics-card">
       <div class="firmographic-stat"><span class="stat-label">Employee Count</span><span class="stat-value">11 – 50 employees</span></div>
-      <div class="firmographic-stat"><span class="stat-label">Funding & Stage</span><span class="stat-value">Seed / Series A (Undisclosed)</span></div>
+      <div class="firmographic-stat"><span class="stat-label">Funding & Stage</span><span class="stat-value">Seed / Series A ($5M - $15M raised)</span></div>
       <div class="firmographic-stat"><span class="stat-label">Founded Year</span><span class="stat-value">2021</span></div>
     </div>
 
@@ -924,7 +992,7 @@
       <div class="section-header">
         <span class="section-title">Executive Briefing</span>
       </div>
-      <p class="executive-text">Vector displays strong top-of-funnel intent with an active blog portal, structured JSON-LD schema, and direct HubSpot calendar integration. However, critical conversion gaps undermine their acquisition efficiency. The complete absence of a Meta Pixel prevents remarketing to high-intent site visitors, while 88 unoptimized images degrade accessibility and search visibility. Resolving these operational leaks will boost demo conversions without increasing ad spend.</p>
+      <p class="executive-text">Vector has built a sharp position in the B2B adtech ecosystem by promising buyer identification down to the individual contact. Despite active top-of-funnel content marketing and strong booking integration via HubSpot, the company is leaking qualified demand. The absence of a Meta Pixel prevents retargeting warm prospect traffic, while severe technical SEO oversights (missing image alt text across 98% of assets) restrict organic visibility. Addressing these low-hanging technical levers will immediately increase pipeline conversion efficiency.</p>
     </div>
 
     <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
@@ -934,10 +1002,39 @@
       </div>
       <div class="coherence-box">
         <div class="coherence-header-row">
-          <span class="coherence-status-pill">Moderate Cross-Channel Alignment</span>
-          <span class="coherence-score-badge">Coherence Score: 7.0 / 10</span>
+          <span class="coherence-status-pill">Moderate Narrative Alignment with Execution Leaks</span>
+          <span class="coherence-score-badge">Coherence Score: 6.8 / 10</span>
         </div>
-        <p class="coherence-critique-text">Vector maintains messaging alignment around &#x27;contact-level advertising&#x27; across primary channels. However, maintaining secondary social handles without implementing tracking pixels to capture referred traffic creates an incomplete conversion loop.</p>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">Moderate Consistency</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Concentrated in Primary B2B Channels</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">B2B Intent Focus</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">Vector presents a clean and compelling narrative around contact-level ad precision across its website and core social touchpoints. However, a strategic disconnect exists between their product promise—delivering targeted advertising—and their owned web infrastructure, which lacks retargeting tracking. While LinkedIn and X support their authoritative tone, secondary channels show minimal audience engagement, creating a fragmented cross-channel footprint.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Core brand message preaches advertising precision, but vector.co lacks a Meta Pixel to retarget warm site visitors</li><li>88 of 89 website images lack alt text, suppressing search engine crawlability and high-intent image search discovery</li><li>Absence of embedded lead capture forms relies entirely on demo bookings, missing top-of-funnel conversion opportunities</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Install standard retargeting pixel infrastructure to align web ops with their ad-precision value prop, while repurposing active blog content into unified video snippets across YouTube and LinkedIn.</p>
+        </div>
       </div>
     </div>
 
@@ -957,7 +1054,7 @@
           <span>Strategic Pitch Angles</span>
         </div>
         <ul class="panel-list">
-<li class="panel-item opportunity-item">🎯 Paid Social Retargeting: 'I ran a quick pixel check and noticed you don't have a Meta pixel active on your site. You are missing out on retargeting visitors who leave without converting.'</li><li class="panel-item opportunity-item">📰 PR / Recent Event Icebreaker: 'Congrats on the recent coverage: "Vector Science and Therapeutics Corp. Enters Into an Investor Relations Agreement and Grants Options - PR Newswire"! Loved seeing your momentum in the industry.'</li>
+<li class="panel-item opportunity-item">🎯 Paid Social Retargeting: 'I ran a quick pixel check and noticed you don't have a Meta pixel active on your site. You are missing out on retargeting visitors who leave without converting.'</li><li class="panel-item opportunity-item">📰 PR / Recent Event Icebreaker: 'Congrats on the recent coverage: "Mesirow Advises Prestige Distribution, Inc. on its Sale to Vector Building Products - PR Newswire"! Loved seeing your momentum in the industry.'</li>
         </ul>
       </div>
     </div>
@@ -1027,13 +1124,13 @@
       <div style="margin-top: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
-          <span class="data-window-caption">Estimated from public social footprints and web metadata, last 90 days</span>
+          <span class="data-window-caption">Estimated from public posts, last 90 days</span>
         </div>
         <div class="chart-container">
           <canvas id="postingFrequencyChart"></canvas>
         </div>
         <p class="companion-text">
-          <strong>Channel Activity Interpretation:</strong> Posting is correctly concentrated on B2B-focused platforms (LinkedIn and X), but secondary channels lack ongoing distribution and audience tracking integration.</p>
+          <strong>Channel Activity Interpretation:</strong> Vector heavily focuses distribution on LinkedIn and X, matching B2B buyer habits. However, dormant video channels mean high-value product walkthroughs are underutilized.</p>
       </div>
     </div>
 
@@ -1087,7 +1184,7 @@
       </div>
 
       <p class="companion-text">
-        <strong>Strategic Pitch Rationale:</strong> As a platform selling precision advertising, Vector&#x27;s lack of paid remarketing pixels on its own domain creates an immediate wedge. Pitching retargeting installation alongside technical alt-tag remediation addresses their lowest-performing acquisition vectors.</p>
+        <strong>Strategic Pitch Rationale:</strong> Vector sells contact-level ad targeting software, making the absence of paid social retargeting pixels on their own website a major tactical gap. Plugging this remarketing hole and fixing basic technical image SEO provides an immediate wedge to demonstrate quantifiable ROI.</p>
     </div>
 
     <!-- 8. Outreach Angle & Message Starter -->
@@ -1099,10 +1196,10 @@
 
       <div style="margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-          <span class="outreach-angle-tag">Paid Retargeting &amp; Accessibility SEO Remediation</span>
+          <span class="outreach-angle-tag">Practicing What You Preach: Closing Retargeting &amp; Search Indexing Leaks</span>
         </div>
         <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
-          <strong>Why this angle:</strong> Vector builds audience targeting tools, making their own lack of pixel tracking and missing image alt tags an urgent, high-relevance improvement target.</p>
+          <strong>Why this angle:</strong> Highlights the paradox of selling ad-targeting tech while missing basic retargeting tracking and SEO metadata on vector.co.</p>
       </div>
 
       <!-- Copyable Message Box -->
@@ -1119,7 +1216,7 @@
         </div>
         <div id="outreachMessageText" class="draft-content">Hi Vector Leadership,
 
-Vector&#x27;s contact-level advertising platform solves a real pain point for B2B marketers, but your own domain is currently missing warm buyer conversions. We noticed vector.co currently lacks a Meta tracking pixel, meaning intent traffic exploring your demo pages cannot be retargeted across social channels. Additionally, 88 of 89 site images lack alt text, limiting your organic search visibility. We can plug these retargeting and technical SEO gaps within 10 days to help you extract full value from your current inbound traffic—open to a brief call this week?</div>
+Vector’s contact-level advertising platform solves a massive headache in B2B account targeting. However, while analyzing vector.co, I noticed a critical technical gap: your site currently lacks a Meta Pixel, meaning high-intent B2B visitors bounce without entering a paid retargeting campaign. Additionally, 88 of your 89 website images lack alt text, missing high-intent organic search indexing. We help B2B adtech platforms fix these precise conversion leaks to maximize site traffic value. Open to reviewing the technical audit brief this week?</div>
       </div>
     </div>
 
@@ -1172,7 +1269,7 @@ Vector&#x27;s contact-level advertising platform solves a real pain point for B2
           labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
           datasets: [{
             label: 'Estimated Posts / Week',
-            data: [3.0, 2.0, 0.0, 0.0, 0.0, 0.0],
+            data: [3.5, 2.0, 0.1, 0.0, 0.0, 0.0],
             backgroundColor: ["#3B5F8A", "#5C5648", "#B45309", "#B45309", "#EDE3D3", "#EDE3D3"],
             borderColor: [
               'rgba(59, 95, 138, 0.3)',
