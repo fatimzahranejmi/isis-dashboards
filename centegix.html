@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isis Intelligence Brief — CENTEGIX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      /* Base surfaces */
+      --bg-app: #F5EEE4;              /* soft almond beige base */
+      --bg-surface: #FBF7F0;          /* card background, slightly lighter */
+      --bg-surface-raised: #FFFFFF;   /* raised elements — pills, avatars */
+      --bg-subtle: #EDE3D3;           /* hover states, subtle fills */
+
+      /* Borders */
+      --border-subtle: rgba(60, 50, 35, 0.08);
+      --border-medium: rgba(60, 50, 35, 0.16);
+
+      /* Text */
+      --text-primary: #2A2420;        /* near-black warm charcoal, not pure black */
+      --text-secondary: #6B5F52;      /* warm grey-brown */
+      --text-tertiary: #9C9082;       /* muted taupe for labels/timestamps */
+
+      /* Tier badges */
+      --accent-tier1-text: #A8681A;
+      --accent-tier1-bg: rgba(214, 149, 56, 0.14);
+      --accent-tier1-border: rgba(214, 149, 56, 0.30);
+
+      --accent-tier2-text: #B08900;
+      --accent-tier2-bg: rgba(212, 168, 0, 0.12);
+
+      --accent-tier3-text: #8A8072;
+      --accent-tier3-bg: rgba(138, 128, 114, 0.12);
+
+      /* Potential Score — teal */
+      --accent-teal-text: #0F766E;
+      --accent-teal-bg: rgba(15, 118, 110, 0.10);
+      --accent-teal-border: rgba(15, 118, 110, 0.22);
+
+      /* Opportunity Rating / positive signals */
+      --accent-green-text: #15803D;
+      --accent-green-bg: rgba(21, 128, 61, 0.10);
+      --accent-green-border: rgba(21, 128, 61, 0.20);
+
+      /* Amber warnings */
+      --accent-amber-text: #B45309;
+      --accent-amber-bg: rgba(217, 119, 6, 0.12);
+      --accent-amber-border: rgba(217, 119, 6, 0.24);
+
+      /* Weaknesses / warnings */
+      --accent-rose-text: #B8433A;
+      --accent-rose-bg: rgba(184, 67, 58, 0.10);
+      --accent-rose-border: rgba(184, 67, 58, 0.20);
+
+      /* Per-channel colors for charts */
+      --channel-linkedin: #3B5F8A;
+      --channel-x: #5C5648;
+      --channel-youtube: #B8483F;
+      --channel-instagram: #A85A94;
+      --channel-tiktok: #2E8B84;
+      --channel-facebook: #4A6FA5;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --card-shadow: 0 1px 3px rgba(60, 50, 35, 0.05), 0 1px 2px rgba(60, 50, 35, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 36px 20px 60px;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    /* Top Bar with Isis Rebrand */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .system-label {
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .audit-date {
+      color: var(--text-secondary);
+    }
+
+    /* Header Section */
+    .header-section {
+      margin-bottom: 16px;
+    }
+
+    .company-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .company-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .tier-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .badge-tier {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: var(--accent-tier1-bg);
+      color: var(--accent-tier1-text);
+      border: 1px solid var(--accent-tier1-border);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .tier-rationale {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      text-align: right;
+      max-width: 340px;
+      line-height: 1.4;
+    }
+
+    .website-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .website-link:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    .website-link svg {
+      width: 13px;
+      height: 13px;
+      opacity: 0.8;
+    }
+
+    /* What They Do Hero Box */
+    .what-they-do-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-left: 4px solid #0F766E;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 16px 0 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .what-they-do-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .what-they-do-text {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    /* Basic Summary & Sector Context Grid */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .basic-summary-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .overview-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .basic-summary-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .sector-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .sector-tag {
+      display: inline-block;
+      background: rgba(60, 50, 35, 0.06);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .sector-text {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Firmographics Card */
+    .firmographics-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .firmographic-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Scores Grid */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .score-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .score-val-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .score-number {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .score-scale {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .score-badge-inline {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .score-badge-teal {
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+    }
+
+    .score-badge-green {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    /* Main Section Card */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    /* Brand Messaging Coherence Audit Box */
+    .coherence-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 4px;
+    }
+
+    .coherence-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .coherence-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      background: rgba(15, 118, 110, 0.10);
+      color: #0F766E;
+      border: 1px solid rgba(15, 118, 110, 0.25);
+    }
+
+    .coherence-status-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-critique-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Executive Briefing */
+    .executive-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.65;
+    }
+
+    /* Weaknesses & Opportunities 2-Column Split */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .split-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .panel-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .title-weakness {
+      color: var(--accent-rose-text);
+    }
+
+    .title-opportunity {
+      color: var(--accent-green-text);
+    }
+
+    .panel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-item {
+      font-size: 12.5px;
+      line-height: 1.5;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+    }
+
+    .weakness-item {
+      background: var(--accent-rose-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-rose-border);
+    }
+
+    .opportunity-item {
+      background: var(--accent-green-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-green-border);
+    }
+
+    /* Channels Grid */
+    .channel-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .channel-card {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .channel-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .channel-name-tag {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-active {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    .status-dormant {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber-text);
+      border: 1px solid var(--accent-amber-border);
+    }
+
+    .status-inactive {
+      background: var(--bg-subtle);
+      color: var(--text-tertiary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .newsletter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 12.5px;
+    }
+
+    /* Posting Frequency Chart Box */
+    .chart-container {
+      position: relative;
+      height: 200px;
+      width: 100%;
+      margin: 10px 0 14px;
+    }
+
+    .data-window-caption {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+    }
+
+    .companion-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Strongest Growth Channel Analysis */
+    .growth-meters-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .growth-meter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .meter-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .meter-name {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .meter-score {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 7px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .meter-teal { background: #0F766E; }
+    .meter-blue { background: #3B5F8A; }
+    .meter-amber { background: #B45309; }
+    .meter-rose { background: #B8433A; }
+
+    /* Outreach Strategy & Message Box */
+    .outreach-angle-tag {
+      display: inline-block;
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .message-draft-box {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      box-shadow: 0 1px 2px rgba(60, 50, 35, 0.04);
+    }
+
+    .draft-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-subtle);
+    }
+
+    .draft-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--text-tertiary);
+    }
+
+    .draft-content {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Jobs Section */
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .job-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .job-role {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .job-location {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Decision Makers Section */
+    .dm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dm-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .dm-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dm-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .dm-name {
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text-primary);
+    }
+
+    .dm-title {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .dm-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .dm-action-btn:hover {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 680px) {
+      .overview-grid, .scores-grid, .split-grid, .firmographics-card {
+        grid-template-columns: 1fr;
+      }
+      .channel-status-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Status Bar -->
+    <div class="top-bar">
+      <span class="system-label">Isis // Intelligence Brief</span>
+      <span class="audit-date">Analyzed: September 09, 2026 | Live Growth Intelligence & Acquisition Stack</span>
+    </div>
+
+    <!-- 1. Header (Company Name, Website, Tier Badge + Dynamic Rationale) -->
+    <header class="header-section">
+      <div class="company-title-row">
+        <div>
+          <h1 class="company-name">CENTEGIX</h1>
+        </div>
+        <div class="tier-wrapper">
+          <div class="badge-tier">
+            <span class="badge-dot"></span>
+            Tier 2 (Medium Potential)
+          </div>
+          <span class="tier-rationale">Tier 2: Solid market foundation (55/100) with key technical conversion opportunities.</span>
+        </div>
+      </div>
+      <a href="https://www.centegix.com" target="_blank" class="website-link">
+        www.centegix.com
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </header>
+
+    <!-- 2. What The Company Does (Core Value Proposition) -->
+    <div class="what-they-do-card">
+      <span class="what-they-do-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        What They Do & Core Value Proposition
+      </span>
+      <p class="what-they-do-text">
+        Industry-leading safety solutions empower rapid incident response to ensure the best outcome in an emergency. Serving education, healthcare, commercial, and government.
+      </p>
+    </div>
+
+    <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
+    <div class="overview-grid">
+      <div class="basic-summary-box">
+        <span class="overview-label">Commercial Market Posture</span>
+        <p class="basic-summary-text">
+          Established platform with sustained market reach. Demonstrates solid brand authority but reveals technical conversion leaks across digital paid retargeting and search indexing.
+        </p>
+      </div>
+
+      <div class="sector-box">
+        <span class="overview-label">Sector Context</span>
+        <div>
+          <span class="sector-tag">B2B Technology &amp; Software</span>
+        </div>
+        <p class="sector-text">
+          Competitive digital software landscape with demanding buyer evaluation cycles. Clear differentiation and conversion tracking are vital for margin expansion.
+        </p>
+      </div>
+    </div>
+    
+    <!-- 2c. Tech Stack & Page Speed -->
+    <div class="overview-grid">
+      <div class="sector-box">
+        <span class="overview-label">Detected Tech Stack</span>
+        <div style="margin-top: 8px;">
+          <span class="sector-tag" style="margin-right: 4px; margin-bottom: 4px; display: inline-block;">WordPress</span>
+        </div>
+      </div>
+      <div class="basic-summary-box" style="align-items: center; justify-content: center; text-align: center;">
+        <span class="overview-label">Mobile PageSpeed Score</span>
+        <div class="score-val-row" style="margin-top: 5px;">
+          <span class="score-number">—</span>
+          <span class="score-scale">/ 100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2d. Firmographics Stats Row -->
+    <div class="firmographics-card">
+      <div class="firmographic-stat">
+        <span class="stat-label">Employee Count</span>
+        <span class="stat-value">9</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Funding & Stage</span>
+        <span class="stat-value">Scaleup / Venture-Backed (Unknown)</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Founded Year</span>
+        <span class="stat-value">—</span>
+      </div>
+    </div>
+
+    <!-- 3. Score Overview -->
+    <div class="scores-grid">
+      <div class="score-card">
+        <div class="score-label">Potential Score</div>
+        <div class="score-val-row">
+          <span class="score-number">55</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-teal">Moderate Viability</span>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Opportunity Rating</div>
+        <div class="score-val-row">
+          <span class="score-number">30</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-green">Targeted Wedge</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Executive Briefing -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Executive Briefing</span>
+      </div>
+      <p class="executive-text">CENTEGIX demonstrates significant brand momentum and inbound market interest. However, key top-of-funnel inefficiencies—specifically in conversion retargeting and structured entity indexing—limit full monetization of existing site visitors. Targeting decision-makers with a concise technical audit delivers an immediate value-add conversation starter.</p>
+    </div>
+
+    <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Brand & Cross-Channel Messaging Coherence</span>
+      </div>
+      <div class="coherence-box">
+        <div class="coherence-header-row">
+          <span class="coherence-status-pill">Strong Cross-Channel Alignment</span>
+          <span class="coherence-score-badge">Coherence Score: 8.8 / 10</span>
+        </div>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">High Consistency</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Active Multi-Channel Presence</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">Unified ICP &amp; Voice</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">CENTEGIX maintains a recognizable core value proposition on its primary domain. However, secondary channel engagement is uneven, leaving opportunities to reinforce their core problem-solving narrative across long-form video and educational search.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Minor narrative drift between high-level brand slogans and technical product documentation.</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Repurpose high-performing website value propositions into regular LinkedIn thought leadership and YouTube product walkthroughs to create an airtight multi-channel narrative.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Weaknesses & Opportunities (2-Column Layout) -->
+    <div class="split-grid">
+      <div class="split-panel">
+        <div class="panel-title title-weakness">
+          <span>Identified Weaknesses & Growth Impact</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item weakness-item"><strong>11 of 18 images missing alt text</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Degrades accessibility and misses high-intent Google Image search traffic.</div></li><li class="panel-item weakness-item"><strong>No Meta Pixel detected</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Non-converting website visitors bounce unmonetized; company cannot run high-ROI paid social retargeting on Instagram/Facebook to recapture warm leads.</div></li><li class="panel-item weakness-item"><strong>Missing X presence</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Untapped channel for Industry commentary &amp; founder branding.</div></li>
+        </ul>
+      </div>
+
+      <div class="split-panel">
+        <div class="panel-title title-opportunity">
+          <span>Strategic Pitch Angles</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item opportunity-item">🎯 Paid Social Retargeting: 'I ran a quick pixel check and noticed you don't have a Meta pixel active on your site. You are missing out on retargeting visitors who leave without converting.'</li><li class="panel-item opportunity-item">📰 PR / Recent Event Icebreaker: 'Congrats on the recent coverage: "A new startup from Figure’s founder is licensing NASA tech in a bid to curb school shootings - TechCrunch"! Loved seeing your momentum in the industry.'</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. Social Media Activity Status & Posting Frequency -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Digital & Channel Footprint (Activity Status)</span>
+      </div>
+
+      <!-- Channel Grid (3x2) -->
+      <div class="channel-status-grid">
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">LinkedIn</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.linkedin.com/company/centegix" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">X (Twitter)</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">YouTube</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.youtube.com/@CENTEGIX" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Instagram</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.instagram.com/centegix_/" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">TikTok</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.tiktok.com/@centegix" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Facebook</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.facebook.com/CentegixOfficial" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+      </div>
+
+      <!-- Newsletter Status Row -->
+      <div class="newsletter-row"><span style="color: var(--text-secondary);">Email Newsletter & Lead Capture:</span><span class="status-pill status-active">Active</span></div>
+
+      <!-- Posting Frequency Chart -->
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
+          <span class="data-window-caption">Estimated from public posts, last 90 days</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="postingFrequencyChart"></canvas>
+        </div>
+        <p class="companion-text">
+          <strong>Channel Activity Interpretation:</strong> LinkedIn and X are the primary active touchpoints. Inactive visual and video channels (YouTube, TikTok) represent untapped customer acquisition territory.</p>
+      </div>
+    </div>
+
+    <!-- 7. Strongest Growth Channel Analysis -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Growth Channel Strength Analysis</span>
+      </div>
+
+      <div class="growth-meters-list">
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Organic B2B Social &amp; Thought Leadership</span>
+            <span class="meter-score">75 / 100 — Strong Existing Channel</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-teal" style="width: 75%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Inbound Content &amp; Educational Resources</span>
+            <span class="meter-score">60 / 100 — Moderate Foundation</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-blue" style="width: 60%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Technical SEO &amp; AI Search Indexing (GEO)</span>
+            <span class="meter-score">70 / 100 — Solid</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-amber" style="width: 70%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Paid Retargeting &amp; Audience Remarketing</span>
+            <span class="meter-score">15 / 100 — Severe Leak / Untapped</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-rose" style="width: 15%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="companion-text">
+        <strong>Strategic Pitch Rationale:</strong> While organic brand authority is high, plugging conversion leaks in paid retargeting and AI schema yields the highest short-term ROI for outreach.</p>
+    </div>
+
+    
+    <!-- 7.5 Post-Level Content Teardown & Optimization (AI Audit) -->
+    <div class="card" id="postLevelAnalysisCard" style="margin-bottom:20px;">
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <span class="section-title">Post-by-Post Content Teardown & Optimization</span>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Granular post critiques, live visual previews, and purpose-matched rewrites grounded in the Isis Knowledge Base.</p>
+        </div>
+        <span class="status-pill status-active" style="font-size:10.5px; background:rgba(15,118,110,0.12); color:#0F766E;">8 Posts Audited</span>
+      </div>
+      <div style="margin-top:16px;">
+        
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/Dc3lfVdm7Tn/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://scontent-ams2-1.cdninstagram.com/v/t51.82787-15/793573734_18628853440032204_599368174241585899_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=100&amp;ig_cache_key=Mzk3ODgxMzY3Njg3NTEzNDE4Mw%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTA4MC5zZHIucmVndWxhcl9waG90by5DMyJ9&amp;_nc_ohc=pwGgwTEU3c0Q7kNvwG5A6f4&amp;_nc_oc=Adqj2YCfWgrCFMaDseB0TSi3pQfx7drxhnnOuWZbNuLfSsh1pEzoh6HrBxaECV4v3y3xZoMg-HGdQTCFuW4_Pd6g&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=scontent-ams2-1.cdninstagram.com&amp;_nc_gid=awOUyBViRkzYuf80jcfF5A&amp;_nc_ss=7a22e&amp;oh=00_AQJg8Wdm6QOwl4U7lsWJDjcUt0zOJIItUpz09kW43frOlw&amp;oe=6AA7735F" 
+               alt="INSTAGRAM Image Post: Today, we remember the four lives lost and all those impacted by the traged..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Today, we remember the four lives lost and all those impacted by the tragedy at Apalachee High School on September 4, 2024.<br><br>Our hearts remain with their families, the students, educators, and the entire Apalachee community.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          This memorial post maintains appropriate reverence for the Apalachee High School community. For sensitive, tragedy-focused posts, forcing commercial positioning or conversion hooks is completely counterproductive and damages brand trust <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[This Is Marketing Summary - Seth Godin]</span>. The existing copy is appropriately concise, dignified, and community-centered.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_1')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_1" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Today, we stand in remembrance of the four lives lost and the entire community impacted by the tragedy at Apalachee High School on September 4, 2024.
+
+Our deepest thoughts and ongoing support remain with the families, students, educators, and first responders of the Apalachee community.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Today, we remember the four lives lost and all those impacted...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Today, we stand in remembrance of the four lives lost and the entire community impacted...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Enhances emotional resonance and solidarity while preserving full respect for the tragedy. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Our hearts remain with their families, the students, educators, and the entire Apalachee community.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Our deepest thoughts and ongoing support remain with the families, students, educators, and first responders...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Explicitly acknowledges first responders alongside educators, broadening empathy across the key ecosystem stakeholders. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[This Is Marketing Summary - Seth Godin]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Video</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DcyufpNE1wj/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/791102808_18628259242032204_4281282515707395606_n.jpg?stp=dst-jpg_e15_tt6&amp;_nc_cat=107&amp;ig_cache_key=Mzk3NzQ0NTkwNTYwNzY0NjI0MzE4NjI4MjU5MjM5MDMyMjA0.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkNMSVBTLnhwaWRzLjEwODAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuQzMifQ%3D%3D&amp;_nc_ohc=2gFfC8JrbHYQ7kNvwELpR7R&amp;_nc_oc=AdrrX_-wOWEnY_nFER_EGBS9QfVNSF0NfOl145_UZ_VAZTPs_dbgzAv8H6NYrHumI1pYqSFTN1eRGya3_I1hZa0X&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=scontent-ord5-2.cdninstagram.com&amp;_nc_gid=iPvm-r0bN89qOs_jHzhxiQ&amp;_nc_ss=7a22e&amp;oh=00_AQKEyFJUhyq9liZ-bMtbyKXYi26QzwqMRJCivC5Z5x7iOQ&amp;oe=6AA7897B" 
+               alt="INSTAGRAM Video Post: Concern is where the conversation starts. Action is what makes a difference..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Concern is where the conversation starts. Action is what makes a difference.<br><br>On September 23, Lori Alhadeff joins school and safety leaders to discuss what it takes to advance school safety priorities.<br><br>Together, they’ll discuss:<br><br>• emergency preparedness<br>• district readiness<br>• Alyssa’s Law<br>• funding and policy<br>• modern safety technology<br>• the questions school leaders should be asking now<br><br>Featuring Lori Alhadeff, Dr. Kristina Brooks, Chief John Newman (Ret.), and Dr. Roderick “Rocky” Sams.<br><br>📅 Sept. 23<br>⏰ 2 PM ET<br><br>Register through the link in bio.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The post attempts to bridge concern to action, but ending with &#x27;Register through the link in bio&#x27; triggers algorithmic suppression on Instagram feed and reels <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the Instagram Algorithm Works in 2026]</span>. Furthermore, listing agenda topics as generic bullets fails to leverage curiosity gaps or invite saves/shares <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Made To Stick]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_2')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_2" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Is your school district truly prepared when seconds count? Moving from concern to action requires a clear operational playbook.
+
+Join school safety leaders for a candid virtual session on advancing district readiness and compliance.
+
+Key discussion pillars:
+1. Alyssa’s Law: Navigating state mandates and funding
+2. Emergency Response: Modernizing campus alert technology
+3. Leadership Checklist: The 5 diagnostic questions every board member must ask today
+
+Panelists:
+• Lori Alhadeff (Make Our Schools Safe)
+• Dr. Kristina Brooks
+• Chief John Newman (Ret.)
+• Dr. Roderick “Rocky” Sams
+
+🗓️ Sept. 23 | 2 PM ET
+
+Save this post as a reminder and drop &#x27;SAFETY&#x27; in the comments for the registration link sent directly to your DMs.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Concern is where the conversation starts. Action is what makes a difference.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Is your school district truly prepared when seconds count? Moving from concern to action requires a clear operational playbook.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Opens with a provocative diagnostic question to hook attention in the first 1.7 seconds. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Register through the link in bio.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Drop &#x27;SAFETY&#x27; in the comments for the registration link sent directly to your DMs.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Eliminates off-platform link-in-bio directives while generating comment velocity and DM interaction signals. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">• emergency preparedness
+• district readiness...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">1. Alyssa’s Law: Navigating state mandates and funding
+2. Emergency Response...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Transforms vague topics into high-value actionable takeaways that incentivize saves. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Contagious - Jonah Berger]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Video</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/Dc0w0tRAHEn/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.fmel14-1.fna.fbcdn.net/v/t51.82787-15/791942892_18628488451032204_1056218161865476945_n.jpg?stp=dst-jpg_e15_tt6&amp;_nc_cat=110&amp;ig_cache_key=Mzk3ODAxOTA5OTEyMzkzNzU3NTE4NjI4NDg4NDQ4MDMyMjA0.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkNMSVBTLnhwaWRzLjEwODAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuQzMifQ%3D%3D&amp;_nc_ohc=Dp9UiYyQT4wQ7kNvwFXojz6&amp;_nc_oc=AdpKmZwfWt0FxAq_vnvcYyM5VcOHoboY46Zn0KcqNoNZMTNRMtm_RYTZ5DPfxj7ZGMw&amp;_nc_ad=z-m&amp;_nc_cid=1036&amp;_nc_zt=23&amp;_nc_ht=instagram.fmel14-1.fna&amp;_nc_gid=gs1ornDuBODCuaW84BJ-Nw&amp;_nc_ss=7a22e&amp;oh=00_AQLj19eujZeUbfgAAeZrrMec-d8K5HiNCGSD5_5LGZxwVQ&amp;oe=6AA76F55" 
+               alt="INSTAGRAM Video Post: When every second matters, faster response can change the outcome. Axon Pre..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            When every second matters, faster response can change the outcome.<br><br>Axon President Josh Isner and CENTEGIX CEO Brent Cobb join The Safety Signal to talk about the future of emergency response — from better communication and video integration to tools designed to get help moving faster.<br><br>Speed. Location. Accurate information.<br><br>That’s what can make the difference.<br><br>🎧 Full episode available now.<br><br>#CENTEGIX #Axon #TheSafetySignal #EmergencyResponse #PublicSafety #ProtectLife
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The opening relies on a tired industry trope (&#x27;When every second matters&#x27;) that lacks a distinctive angle or narrative hook <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Made To Stick]</span>. Additionally, relying on generic hashtag blocks instead of descriptive keyword-rich copy fails to leverage Instagram&#x27;s semantic search distribution <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the Instagram Algorithm Works in 2026]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_3')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_3" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+What actually happens between an emergency alert and first responder arrival? In critical situations, response latency is driven by three friction points: unclear location, delayed communication, and fragmented video feeds.
+
+In this episode of The Safety Signal, Axon President Josh Isner and CENTEGIX CEO Brent Cobb break down how integrated incident response technology is solving these gaps.
+
+Key Insights:
+• Bridging wearable panic buttons with real-time CAD and video integration
+• Eliminating accurate location guesswork for 911 dispatch
+• How unified safety ecosystems empower faster responder action
+
+🎧 Listen to the full conversation on your favorite podcast platform. What is your district&#x27;s biggest incident response bottleneck?
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">When every second matters, faster response can change the outcome.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">What actually happens between an emergency alert and first responder arrival? In critical situations, response latency is driven by three friction points...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces a generic slogan with a problem-centric curiosity gap focused on response latency. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Speed. Location. Accurate information. That’s what can make the difference.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Key Insights:
+• Bridging wearable panic buttons with real-time CAD and video integration
+• Eliminating accurate location guesswork for 911 dispatch...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Provides structured, technical value detailing mechanisms rather than vague high-level words. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Isis Strategic Marketing &amp; Consulting Playbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">#CENTEGIX #Axon #TheSafetySignal #EmergencyResponse #PublicSafety #ProtectLife</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">What is your district&#x27;s biggest incident response bottleneck?</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces low-value hashtag blocks with a genuine conversation prompt to spark comment replies. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Video</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DdEXAG6jdCN/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.fmty6-1.fna.fbcdn.net/v/t51.82787-15/801962960_18630520456032204_4552222933465641327_n.jpg?stp=dst-jpg_e15_tt6&amp;_nc_cat=102&amp;ig_cache_key=Mzk8MjQwOTEzMjk5NjkzOTkxNzE4NjMwNTIwNDUzMDMyMjA0.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkNMSVBTLnhwaWRzLjEwODAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuQzMifQ%3D%3D&amp;_nc_ohc=fNfs-crIE04Q7kNvwFMbPf2&amp;_nc_oc=Adp2y7l9nhapHsIJ_xAsPvOVZbbZhDEGlwAyQ2luDLlOVzB8iB1YfntpxNPvDsmI2Rg&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=instagram.fmty6-1.fna&amp;_nc_gid=xO8TBw4Z22lyri-cfBxt-g&amp;_nc_ss=7a22e&amp;oh=00_AQLCXQqHOXfpgdkdH9cR2QT5sixGTB_YJ8bethFESUy1HQ&amp;oe=6AA76D7E" 
+               alt="INSTAGRAM Video Post: Better technology matters. Better partnerships matter too. As the safety ec..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Better technology matters. Better partnerships matter too.<br><br>As the safety ecosystem evolves, collaboration between can help create faster, more connected responses.<br><br>Axon President Josh Isner shares why partnership is becoming so important—and why Axon and CENTEGIX are excited about what comes next.<br><br>🎧 Full conversation on The Safety Signal.<br><br>#CENTEGIX #Axon #TheSafetySignal #SafetyTechnology #PublicSafety
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The messaging focuses on self-serving corporate PR (&#x27;Better partnerships matter&#x27;) rather than educating the ideal buyer profile on a concrete problem or technical mechanism <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Isis Strategic Marketing &amp; Consulting Playbook]</span>. Re-anchoring the caption around how interoperability solves real-time responder blind spots makes the post significantly more shareable via DMs <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the Instagram Algorithm Works in 2026]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_4')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_4" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Siloed safety tools create dangerous blind spots during critical incidents. True emergency preparedness requires seamless technology integration across campuses and 911 dispatch.
+
+Axon President Josh Isner explains why deep ecosystem collaboration between Axon and CENTEGIX is critical to reducing dispatch times and giving first responders instant situational awareness.
+
+What integrated safety ecosystems deliver:
+• Instant mapping of emergency badge activations
+• Automatic camera feeds triggered by alert location
+• Direct communication channels between staff and emergency responders
+
+🎧 Catch the full discussion on The Safety Signal. Share this with a school administrator or public safety leader evaluating campus safety tech.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Better technology matters. Better partnerships matter too.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Siloed safety tools create dangerous blind spots during critical incidents. True emergency preparedness requires seamless technology integration...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Pivots from vague brand statements to an urgent, problem-focused wedge hook. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Isis Strategic Marketing &amp; Consulting Playbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Axon President Josh Isner shares why partnership is becoming so important...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">What integrated safety ecosystems deliver:
+• Instant mapping of emergency badge activations
+• Automatic camera feeds triggered by alert location...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Translates high-level corporate partnership news into specific, save-worthy capabilities. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Contagious - Jonah Berger]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">🎧 Full conversation on The Safety Signal.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">🎧 Catch the full discussion on The Safety Signal. Share this with a school administrator or public safety leader evaluating campus safety tech.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Includes a direct CTA designed to drive DM shares, the highest-weighted signal for Instagram reach. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/Dc_Rt5uINPh/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://scontent-mad1-1.cdninstagram.com/v/t51.82787-15/799346791_18629893615032204_8924169052829695027_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=102&amp;ig_cache_key=Mzk4MDk3ODUxNjc2MzEzNjk5Mw%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTQxMy5zZHIucmVndWxhcl9waG90by5DMyJ9&amp;_nc_ohc=YhaygmVq-aoQ7kNvwEOukJY&amp;_nc_oc=Ado-wksll4DGNxDQf6liE6Jnp7nvdrqElPNoTuNuHO9boInwgik9oGH8-Kv8Lh_JQiU&amp;_nc_zt=23&amp;_nc_ht=scontent-mad1-1.cdninstagram.com&amp;_nc_gid=dl_F8m6XGAeU-SSzkbPqfw&amp;_nc_ss=7da8c&amp;oh=00_AQJNJpYTJTdEhq-ZVgUkV8QvhVOBhxxCnOOYIUBOo3Ozvw&amp;oe=6AA78212" 
+               alt="INSTAGRAM Image Post: Safety technology is only part of the equation. Preparation matters, too. O..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Safety technology is only part of the equation. Preparation matters, too.<br><br>Odyssey Charter School recently strengthened its emergency communications and tested its new panic alert system during a campus safety drill.<br><br>The system connects with local emergency responders and is synchronized with the local 911 center—helping staff communicate quickly when an emergency happens.<br><br>Technology. Training. Communication. Readiness.<br><br>All working together to help create a safer school community.<br><br>#CENTEGIX #SchoolSafety #EmergencyResponse #EmergencyPreparedness #AlyssasLaw
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          While highlighting real-world school drill success builds authority, the caption lacks a clear narrative arc (Challenge, Action, Outcome) to make the case study compelling and sticky <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Made To Stick]</span>. Re-formatting real implementation results into a step-by-step operational blueprint significantly increases save rates <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the Instagram Algorithm Works in 2026]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_5')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_5" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+How does a school ensure its panic button technology actually works during a real crisis? Through rigorous, synchronized emergency drills.
+
+Case Study: Odyssey Charter School recently tested their CrisisAlert wearable panic system in a full campus safety drill.
+
+The Operational Breakdown:
+1. Activation: Staff triggered immediate duress alerts via wearable badges.
+2. Synchronization: Emergency notification instantly mapped the exact location and alerted local 911 dispatch.
+3. Validation: Response workflows verified seamless multi-agency communication across campus.
+
+Technology without drill preparation creates risk. Having both creates true readiness.
+
+📌 Save this checklist for your school district&#x27;s next safety committee review.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Safety technology is only part of the equation. Preparation matters, too.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">How does a school ensure its panic button technology actually works during a real crisis? Through rigorous, synchronized emergency drills.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces flat statements with a compelling question that introduces a real-world story narrative. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">The system connects with local emergency responders and is synchronized with the local 911 center...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">The Operational Breakdown:
+1. Activation: Staff triggered immediate duress alerts...
+2. Synchronization: Emergency notification instantly mapped...
+3. Validation: Response workflows verified...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Presents information in a clear, structured list format optimized for high save rates. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Technology. Training. Communication. Readiness.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">📌 Save this checklist for your school district&#x27;s next safety committee review.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Includes an explicit call to save content, driving higher platform reach. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/centegix_correctionalsafety-officersafety-corrections-activity-7503422016025251840-UeZ7" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://media.licdn.com/dms/image/v2/D5610AQFfzS4o1ydkAw/image-shrink_1280/B56aCGCjAgKIAc-/0/1788955210407?e=1789585200&amp;v=beta&amp;t=MMQIHuMeaA4gfn30EDBw_Mv41UZTL5e6KQP7ZQwkN9k" 
+               alt="LINKEDIN Image Post: In a correctional emergency, sending an alert is only the beginning. A mode..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            In a correctional emergency, sending an alert is only the beginning.<br><br>A modern officer duress system should help answer three critical questions immediately:<br>Who needs help?<br>Where are they?<br>Who needs to respond?<br><br>That means moving beyond fixed panic buttons or basic notifications toward wearable activation, precise location information, reliable facility-wide coverage, and clearly defined response workflows.<br><br>Because when an officer or staff member is under duress, responders shouldn’t have to spend valuable time searching for the information they need.<br><br>Our latest blog breaks down what correctional leaders should evaluate when considering a modern duress system.<br><br>Read more: https://hubs.li/Q04wCzyk0<br><br>#CorrectionalSafety #OfficerSafety #Corrections #PublicSafety #EmergencyResponse
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          Including an external link in the post body triggers a ~60% distribution penalty under LinkedIn&#x27;s 360Brew ranking algorithm <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>. While the 3-question diagnostic framework is strong, the post should deliver complete educational value directly in the feed to maximize dwell time and saves <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn algorithm works in 2026]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_6')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_6" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+In a correctional facility emergency, sending a duress signal is only step one. The critical failure point in traditional panic systems is location latency.
+
+When an officer triggers an alert, responders must answer 3 immediate questions within seconds:
+1. Who needs help? (Officer identification)
+2. Where are they located? (Precise, multi-floor indoor mapping)
+3. Who is nearest to respond? (Real-time resource allocation)
+
+4 Evaluation Standards for Modern Officer Duress Technology:
+📌 Wearable Activation: Instant triggering from anywhere, not fixed wall buttons.
+📌 Dynamic Location Tracking: Continuous accuracy inside concrete and steel structures.
+📌 Automated Workflows: Simultaneous alerts sent to central control and surrounding staff.
+📌 Facility-Wide Coverage: 100% dead-zone elimination.
+
+What key requirement is missing from legacy duress systems in your experience?
+
+(Full evaluation breakdown linked in the comments)
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Read more: https://hubs.li/Q04wCzyk0</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">(Full evaluation breakdown linked in the comments)</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Removes external links from the main post body to avoid algorithmic reach penalties under 360Brew. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">That means moving beyond fixed panic buttons or basic notifications toward wearable activation...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">4 Evaluation Standards for Modern Officer Duress Technology:
+📌 Wearable Activation: Instant triggering...
+📌 Dynamic Location Tracking...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Formats insights into a structured, saveable framework that drives dwell time and authority signals. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn algorithm works in 2026]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">#CorrectionalSafety #OfficerSafety #Corrections #PublicSafety #EmergencyResponse</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">What key requirement is missing from legacy duress systems in your experience?</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Concludes with an open, professional opinion prompt to trigger meaningful comments. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn algorithm works in 2026]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Text</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/centegix_schoolsafety-schoolboards-educationleadership-activity-7503065814783324160-Lbhx" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; border-radius:6px; border:1px dashed var(--border-medium); background:var(--bg-app); display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-secondary); font-size:11px; text-align:center; padding:8px;">
+          <span style="font-size:18px;">📝</span>
+          <span style="font-weight:600; margin-top:4px;">Text / Status Post</span>
+          <span style="font-size:9.5px; opacity:0.7; margin-top:2px;">(No media attached)</span>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            School safety can’t stop at concern. The next step is action.<br><br>On September 23, CENTEGIX is joining the National School Boards Association and Make Our Schools Safe for a conversation designed to help school board members and education leaders better understand their role in creating safer schools.<br><br>Hear perspectives from advocacy, emergency response, and district leadership and walk away with practical questions you can bring back to your own community.<br><br>📅 September 23<br> ⏰ 2:00 p.m. ET<br> 💻 Virtual<br><br>Join us for From Concern to Action: Leading the School Safety Conversation in Your District.<br><br>👉 Register through the event below.<br><br>#SchoolSafety #SchoolBoards #EducationLeadership #EmergencyPreparedness #SaferSchools
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The post targets school board members but speaks in broad generalities (&#x27;better understand their role&#x27;) rather than pinpointing specific governance, policy, or budget challenges <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Isis Strategic Marketing &amp; Consulting Playbook]</span>. Framing the post around specific, uncomfortable diagnostic questions creates strong tension and invites high-value comments <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_7')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_7" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+School board members face a critical governance challenge: How do you verify that your district’s emergency response plans will execute seamlessly during a real crisis?
+
+Passive safety policy is no longer enough. Board members and superintendents need an operational framework to evaluate district readiness.
+
+On September 23, CENTEGIX is partnering with the National School Boards Association (NSBA) and Make Our Schools Safe to address the key questions district leaders must ask:
+
+1. What is our district&#x27;s exact time-to-notify for local emergency services?
+2. Are staff members equipped with wearable duress technology or reliant on manual phone apps?
+3. How does our current infrastructure comply with state Alyssa’s Law mandates?
+
+🗓️ Sept. 23 | 2:00 PM ET
+
+Educational leaders: What is the biggest barrier your school board faces when funding safety upgrades?
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">School safety can’t stop at concern. The next step is action.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">School board members face a critical governance challenge: How do you verify that your district’s emergency response plans will execute seamlessly during a real crisis?</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Hooks the specific ICP (School Board Members) by naming their primary governance and risk challenge. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Isis Strategic Marketing &amp; Consulting Playbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Hear perspectives from advocacy, emergency response, and district leadership and walk away with practical questions...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">On September 23, CENTEGIX is partnering with NSBA... to address the key questions district leaders must ask:
+1. What is our district&#x27;s exact time-to-notify...
+2. Are staff members equipped with wearable duress technology...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces generic event descriptions with precise, high-friction diagnostic questions that build tension. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[This Is Marketing Summary - Seth Godin]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">👉 Register through the event below.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Educational leaders: What is the biggest barrier your school board faces when funding safety upgrades?</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Adds a targeted conversation starter to fuel early comment velocity, a key signal for 360Brew feed reach. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/centegix_centegix-schoolsafety-emergencypreparedness-activity-7502682209867399168-Hutg" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://media.licdn.com/dms/image/v2/D5610AQE18NbCmjZRFg/image-shrink_1280/B56aB7hsnzHYAc-/0/1788778826513?e=1789585200&amp;v=beta&amp;t=mNZ-qgeha-zQK9Y4Svge4Ptoabte6fskZSMXK8ovnR8" 
+               alt="LINKEDIN Image Post: School safety is strongest when technology, training, and emergency respons..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            School safety is strongest when technology, training, and emergency response work together.<br><br>Odyssey Charter School in Newnan, Georgia, recently strengthened its emergency communications with a new panic alert system that helps staff quickly connect with local emergency responders.<br><br>On August 28, the school completed its first campus safety drill using the system, giving staff an opportunity to practice established procedures and confirm that emergency notification and response systems were working as intended.<br><br>It’s a great example of moving beyond simply having safety technology in place and making sure people are prepared to use it when every second matters.<br><br>Read more from The Newnan Times-Herald:<br>https://hubs.li/Q04wyFPl0<br>#CENTEGIX #SchoolSafety #EmergencyPreparedness #EmergencyResponse #AlyssasLaw
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          Linking directly to an external news article deprioritizes feed distribution under LinkedIn&#x27;s 360Brew ranking algorithm <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>. Rebuilding the post into a native case study teardown captures high dwell time and positions CENTEGIX as an authoritative subject-matter expert <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn algorithm works in 2026]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_8')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_8" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Installing safety technology is only 50% of the equation. The other 50% is verifying operational execution under drill conditions.
+
+Case Study: Odyssey Charter School (Newnan, GA) recently executed their first full-campus emergency drill utilizing the CrisisAlert system.
+
+The Drill Teardown:
+• Context: Staff practiced emergency protocol procedures during a live simulation.
+• Mechanism: Wearable badges enabled staff to trigger immediate alerts from anywhere on campus without searching for a phone.
+• Outcome: Direct integration automatically notified local emergency responders and synchronized with the 911 dispatch center in real time.
+
+3 Takeaways for District Safety Leaders:
+1. Mobile apps fail during panic; wearable physical devices ensure 100% access.
+2. Drills must validate 911 coordination, not just internal announcements.
+3. Continuous training converts technology investments into real campus readiness.
+
+How frequently does your district run multi-agency synchronized emergency drills?
+
+(Link to full press coverage in comments)
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">School safety is strongest when technology, training, and emergency response work together.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Installing safety technology is only 50% of the equation. The other 50% is verifying operational execution under drill conditions.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Establishes a strong point-of-view hook that highlights an operational gap. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Isis Strategic Marketing &amp; Consulting Playbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Read more from The Newnan Times-Herald: https://hubs.li/Q04wyFPl0</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">(Link to full press coverage in comments)</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Moves external links out of the main post body to prevent algorithmic reach throttling. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">On August 28, the school completed its first campus safety drill using the system...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">3 Takeaways for District Safety Leaders:
+1. Mobile apps fail during panic; wearable physical devices ensure 100% access...
+2. Drills must validate 911 coordination...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Extracts actionable takeaways from the case study into a saveable, high-dwell framework. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn algorithm works in 2026]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- 8. Outreach Angle & Message Starter -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Recommended Outreach Strategy</span>
+        <span class="status-pill status-active" style="font-size: 10px;">Primary Wedge</span>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+          <span class="outreach-angle-tag">Paid Retargeting &amp; Full-Funnel Tracking Setup</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
+          <strong>Why this angle:</strong> CENTEGIX generates organic site traffic but currently lacks Meta retargeting pixels, causing non-converting visitors to bounce without re-engagement.</p>
+      </div>
+
+      <!-- Copyable Message Box -->
+      <div class="message-draft-box" style="border:1px solid var(--border-medium); border-radius:8px; background:var(--bg-surface); padding:16px;">
+        <div class="draft-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+          <div>
+            <span class="draft-label" style="font-size:12px; font-weight:700; color:var(--text-primary);">Draft Cold Outreach Message // Personalized for Daniel Dooley</span>
+            <span style="display:inline-block; margin-left:8px; font-size:10.5px; color:#D97706; background:rgba(217,119,6,0.1); padding:1px 6px; border-radius:4px; font-weight:600;">Editable Scratchpad (Click to Edit)</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="copy-btn" onclick="resetOutreachMessage()" style="background:transparent; border:1px solid var(--border-medium); color:var(--text-secondary); font-size:11.5px; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:500;">
+              🔄 Reset to Original
+            </button>
+            <button class="copy-btn" id="mainCopyBtn" onclick="copyEditableMessage()" style="background:#0F766E; color:#fff; border:none; font-size:11.5px; padding:4px 10px; border-radius:4px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copyBtnText">Copy Outreach</span>
+            </button>
+          </div>
+        </div>
+        
+        <div id="outreachMessageText" 
+             contenteditable="true" 
+             data-original="Hi Daniel Dooley,&#10;&#10;I&#x27;ve been following CENTEGIX&#x27;s work around &#x27;Industry-leading safety solutions empower rapid incident response to ensure the best outcome in an emergency. Serving education, healthcare, commercial, and government.&#x27; and wanted to reach out directly.&#10;&#10;When running a quick growth check on your web stack, I noticed your site is currently missing Meta retargeting pixels, meaning high-intent visitors are dropping off uncaptured.&#10;&#10;I drafted a 5-point teardown showing how to plug this traffic leak and recover lost pipeline. Would you like me to send it across?&#10;&#10;Best,&#10;[Your Name]"
+             style="min-height:160px; font-size:13.5px; line-height:1.65; color:var(--text-primary); font-family:inherit; white-space:pre-wrap; outline:none; padding:10px; border-radius:6px; border:1px dashed var(--border-medium); transition:border-color 0.2s;"
+             onfocus="this.style.borderColor='#0F766E'; this.style.background='rgba(15,118,110,0.02)';"
+             onblur="this.style.borderColor='var(--border-medium)'; this.style.background='transparent';">Hi Daniel Dooley,
+
+I&#x27;ve been following CENTEGIX&#x27;s work around &#x27;Industry-leading safety solutions empower rapid incident response to ensure the best outcome in an emergency. Serving education, healthcare, commercial, and government.&#x27; and wanted to reach out directly.
+
+When running a quick growth check on your web stack, I noticed your site is currently missing Meta retargeting pixels, meaning high-intent visitors are dropping off uncaptured.
+
+I drafted a 5-point teardown showing how to plug this traffic leak and recover lost pipeline. Would you like me to send it across?
+
+Best,
+[Your Name]</div>
+
+        <div style="font-size:11px; color:var(--text-secondary); margin-top:8px; display:flex; align-items:center; gap:4px;">
+          <span>ℹ️ Note: Edits made in this scratchpad are temporary and not saved on page refresh.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Marketing Jobs Available -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Marketing Hiring Activity (0 Open Roles — Fractional Target)</span>
+      </div>
+      <div class="jobs-list">
+
+        <div class="job-item">
+          <span class="job-role">No active in-house marketing listings found</span>
+          <span class="job-location">Fractional Outreach Candidate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Target Decision Makers -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Target Decision Makers (1 Available)</span>
+      </div>
+      <div class="dm-list">
+
+            <div class="dm-card">
+              <div class="dm-info">
+                <div class="dm-avatar">DD</div>
+                <div>
+                  <div class="dm-name">Daniel Dooley</div>
+                  <div class="dm-title">Chief Executive Officer</div>
+                  
+                <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
+                  <a href="mailto:daniel.dooley@centegix.com" style="font-family: var(--font-mono); font-size: 11.5px; color: #0F766E; text-decoration: none; font-weight: 500;">
+                    ✉ daniel.dooley@centegix.com
+                  </a>
+                  <span style="font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: var(--bg-subtle); color: var(--text-secondary); border: 1px solid var(--border-subtle);">
+                    Unverified
+                  </span>
+                </div>
+                </div>
+              </div>
+              <a href="https://www.linkedin.com/in/daniel-dooley-centegix" target="_blank" class="dm-action-btn">
+                <span>View Profile</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
+            </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart.js & Clipboard Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const ctx = document.getElementById('postingFrequencyChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
+          datasets: [{
+            label: 'Estimated Posts / Week',
+            data: [4.0, 0.0, 0.2, 0.0, 0.0, 0.0],
+            backgroundColor: ["#3B5F8A", "#EDE3D3", "#B45309", "#B45309", "#A85A94", "#A85A94"],
+            borderColor: [
+              'rgba(59, 95, 138, 0.3)',
+              'rgba(92, 86, 72, 0.3)',
+              'rgba(184, 72, 63, 0.3)',
+              'rgba(168, 90, 148, 0.3)',
+              'rgba(60, 50, 35, 0.12)',
+              'rgba(60, 50, 35, 0.12)'
+            ],
+            borderWidth: 1,
+            borderRadius: 4,
+            borderSkipped: false,
+            barThickness: 26
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#2A2420',
+              titleColor: '#FBF7F0',
+              bodyColor: '#EDE3D3',
+              borderColor: 'rgba(60, 50, 35, 0.15)',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return context.parsed.y + ' posts / week';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#6B5F52',
+                font: { family: "'Inter', sans-serif", size: 11, weight: '500' }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 5,
+              grid: {
+                color: 'rgba(60, 50, 35, 0.08)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9C9082',
+                font: { family: "'JetBrains Mono', monospace", size: 10 },
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    });
+
+    function copyEditableMessage() {
+      const text = document.getElementById('outreachMessageText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copyBtnText');
+        const orig = btnText.innerText;
+        btnText.innerText = '✓ Copied!';
+        setTimeout(() => { btnText.innerText = orig; }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+
+    function resetOutreachMessage() {
+      const el = document.getElementById('outreachMessageText');
+      const original = el.getAttribute('data-original');
+      if (original) {
+        el.innerText = original;
+        const btnText = document.getElementById('copyBtnText');
+        btnText.innerText = 'Reset Done';
+        setTimeout(() => { btnText.innerText = 'Copy Outreach'; }, 1500);
+      }
+    }
+
+    function copySpecificText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Rewrite copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+
+</body>
+</html>
