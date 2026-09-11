@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isis Intelligence Brief — Cognee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      /* Base surfaces */
+      --bg-app: #F5EEE4;              /* soft almond beige base */
+      --bg-surface: #FBF7F0;          /* card background, slightly lighter */
+      --bg-surface-raised: #FFFFFF;   /* raised elements — pills, avatars */
+      --bg-subtle: #EDE3D3;           /* hover states, subtle fills */
+
+      /* Borders */
+      --border-subtle: rgba(60, 50, 35, 0.08);
+      --border-medium: rgba(60, 50, 35, 0.16);
+
+      /* Text */
+      --text-primary: #2A2420;        /* near-black warm charcoal, not pure black */
+      --text-secondary: #6B5F52;      /* warm grey-brown */
+      --text-tertiary: #9C9082;       /* muted taupe for labels/timestamps */
+
+      /* Tier badges */
+      --accent-tier1-text: #A8681A;
+      --accent-tier1-bg: rgba(214, 149, 56, 0.14);
+      --accent-tier1-border: rgba(214, 149, 56, 0.30);
+
+      --accent-tier2-text: #B08900;
+      --accent-tier2-bg: rgba(212, 168, 0, 0.12);
+
+      --accent-tier3-text: #8A8072;
+      --accent-tier3-bg: rgba(138, 128, 114, 0.12);
+
+      /* Potential Score — teal */
+      --accent-teal-text: #0F766E;
+      --accent-teal-bg: rgba(15, 118, 110, 0.10);
+      --accent-teal-border: rgba(15, 118, 110, 0.22);
+
+      /* Opportunity Rating / positive signals */
+      --accent-green-text: #15803D;
+      --accent-green-bg: rgba(21, 128, 61, 0.10);
+      --accent-green-border: rgba(21, 128, 61, 0.20);
+
+      /* Amber warnings */
+      --accent-amber-text: #B45309;
+      --accent-amber-bg: rgba(217, 119, 6, 0.12);
+      --accent-amber-border: rgba(217, 119, 6, 0.24);
+
+      /* Weaknesses / warnings */
+      --accent-rose-text: #B8433A;
+      --accent-rose-bg: rgba(184, 67, 58, 0.10);
+      --accent-rose-border: rgba(184, 67, 58, 0.20);
+
+      /* Per-channel colors for charts */
+      --channel-linkedin: #3B5F8A;
+      --channel-x: #5C5648;
+      --channel-youtube: #B8483F;
+      --channel-instagram: #A85A94;
+      --channel-tiktok: #2E8B84;
+      --channel-facebook: #4A6FA5;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --card-shadow: 0 1px 3px rgba(60, 50, 35, 0.05), 0 1px 2px rgba(60, 50, 35, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 36px 20px 60px;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    /* Top Bar with Isis Rebrand */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .system-label {
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .audit-date {
+      color: var(--text-secondary);
+    }
+
+    /* Header Section */
+    .header-section {
+      margin-bottom: 16px;
+    }
+
+    .company-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .company-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .tier-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .badge-tier {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: var(--accent-tier1-bg);
+      color: var(--accent-tier1-text);
+      border: 1px solid var(--accent-tier1-border);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .tier-rationale {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      text-align: right;
+      max-width: 340px;
+      line-height: 1.4;
+    }
+
+    .website-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .website-link:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    .website-link svg {
+      width: 13px;
+      height: 13px;
+      opacity: 0.8;
+    }
+
+    /* What They Do Hero Box */
+    .what-they-do-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-left: 4px solid #0F766E;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 16px 0 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .what-they-do-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .what-they-do-text {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    /* Basic Summary & Sector Context Grid */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .basic-summary-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .overview-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .basic-summary-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .sector-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .sector-tag {
+      display: inline-block;
+      background: rgba(60, 50, 35, 0.06);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .sector-text {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Firmographics Card */
+    .firmographics-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .firmographic-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Scores Grid */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .score-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .score-val-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .score-number {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .score-scale {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .score-badge-inline {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .score-badge-teal {
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+    }
+
+    .score-badge-green {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    /* Main Section Card */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    /* Brand Messaging Coherence Audit Box */
+    .coherence-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 4px;
+    }
+
+    .coherence-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .coherence-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      background: rgba(15, 118, 110, 0.10);
+      color: #0F766E;
+      border: 1px solid rgba(15, 118, 110, 0.25);
+    }
+
+    .coherence-status-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-critique-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Executive Briefing */
+    .executive-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.65;
+    }
+
+    /* Weaknesses & Opportunities 2-Column Split */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .split-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .panel-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .title-weakness {
+      color: var(--accent-rose-text);
+    }
+
+    .title-opportunity {
+      color: var(--accent-green-text);
+    }
+
+    .panel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-item {
+      font-size: 12.5px;
+      line-height: 1.5;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+    }
+
+    .weakness-item {
+      background: var(--accent-rose-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-rose-border);
+    }
+
+    .opportunity-item {
+      background: var(--accent-green-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-green-border);
+    }
+
+    /* Channels Grid */
+    .channel-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .channel-card {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .channel-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .channel-name-tag {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-active {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    .status-dormant {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber-text);
+      border: 1px solid var(--accent-amber-border);
+    }
+
+    .status-inactive {
+      background: var(--bg-subtle);
+      color: var(--text-tertiary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .newsletter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 12.5px;
+    }
+
+    /* Posting Frequency Chart Box */
+    .chart-container {
+      position: relative;
+      height: 200px;
+      width: 100%;
+      margin: 10px 0 14px;
+    }
+
+    .data-window-caption {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+    }
+
+    .companion-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Strongest Growth Channel Analysis */
+    .growth-meters-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .growth-meter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .meter-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .meter-name {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .meter-score {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 7px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .meter-teal { background: #0F766E; }
+    .meter-blue { background: #3B5F8A; }
+    .meter-amber { background: #B45309; }
+    .meter-rose { background: #B8433A; }
+
+    /* Outreach Strategy & Message Box */
+    .outreach-angle-tag {
+      display: inline-block;
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .message-draft-box {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      box-shadow: 0 1px 2px rgba(60, 50, 35, 0.04);
+    }
+
+    .draft-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-subtle);
+    }
+
+    .draft-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--text-tertiary);
+    }
+
+    .draft-content {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Jobs Section */
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .job-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .job-role {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .job-location {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Decision Makers Section */
+    .dm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dm-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .dm-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dm-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .dm-name {
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text-primary);
+    }
+
+    .dm-title {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .dm-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .dm-action-btn:hover {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 680px) {
+      .overview-grid, .scores-grid, .split-grid, .firmographics-card {
+        grid-template-columns: 1fr;
+      }
+      .channel-status-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Status Bar -->
+    <div class="top-bar">
+      <span class="system-label">Isis // Intelligence Brief</span>
+      <span class="audit-date">Analyzed: September 11, 2026 | Live Growth Intelligence & Acquisition Stack</span>
+    </div>
+
+    <!-- 1. Header (Company Name, Website, Tier Badge + Dynamic Rationale) -->
+    <header class="header-section">
+      <div class="company-title-row">
+        <div>
+          <h1 class="company-name">Cognee</h1>
+        </div>
+        <div class="tier-wrapper">
+          <div class="badge-tier">
+            <span class="badge-dot"></span>
+            Tier 2 (Medium Potential)
+          </div>
+          <span class="tier-rationale">High developer traction on GitHub and Product Hunt offset by missing paid retargeting pixels, crawl budget oversights, and zero internal growth headcount.</span>
+        </div>
+      </div>
+      <a href="https://cognee.ai" target="_blank" class="website-link">
+        cognee.ai
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </header>
+
+    <!-- 2. What The Company Does (Core Value Proposition) -->
+    <div class="what-they-do-card">
+      <span class="what-they-do-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        What They Do & Core Value Proposition
+      </span>
+      <p class="what-they-do-text">
+        Cognee builds an open-source agent memory platform that enables developers to add persistent graph, vector, and relational memory to LLM applications in six lines of code. Their software target AI engineers and software teams building autonomous agents that require context retention across user sessions.
+      </p>
+    </div>
+
+    <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
+    <div class="overview-grid">
+      <div class="basic-summary-box">
+        <span class="overview-label">Commercial Market Posture</span>
+        <p class="basic-summary-text">
+          Cognee maintains high product momentum and open-source mindshare among AI developers, but currently suffers from commercial conversion leaks on its primary web domain.
+        </p>
+      </div>
+
+      <div class="sector-box">
+        <span class="overview-label">Sector Context</span>
+        <div>
+          <span class="sector-tag">B2B SaaS — AI Infrastructure &amp; Agent Memory</span>
+        </div>
+        <p class="sector-text">
+          Highly competitive developer tooling market where speed of integration and technical authority dictate market share. Evaluation cycles are engineering-led with a strong emphasis on self-hosted and open-source capabilities.
+        </p>
+      </div>
+    </div>
+    
+    <!-- 2c. Tech Stack & Page Speed -->
+    <div class="overview-grid">
+      <div class="sector-box">
+        <span class="overview-label">Detected Tech Stack</span>
+        <div style="margin-top: 8px;">
+          <span style="color: var(--text-tertiary);">No detectable stack</span>
+        </div>
+      </div>
+      <div class="basic-summary-box" style="align-items: center; justify-content: center; text-align: center;">
+        <span class="overview-label">Mobile PageSpeed Score</span>
+        <div class="score-val-row" style="margin-top: 5px;">
+          <span class="score-number">—</span>
+          <span class="score-scale">/ 100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2d. Firmographics Stats Row -->
+    <div class="firmographics-card">
+      <div class="firmographic-stat">
+        <span class="stat-label">Employee Count</span>
+        <span class="stat-value">11-50 (Estimated)</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Funding & Stage</span>
+        <span class="stat-value">Seed / Early Stage (Unknown)</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Founded Year</span>
+        <span class="stat-value">2023</span>
+      </div>
+    </div>
+
+    <!-- 3. Score Overview -->
+    <div class="scores-grid">
+      <div class="score-card">
+        <div class="score-label">Potential Score</div>
+        <div class="score-val-row">
+          <span class="score-number">70</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-teal">Moderate Viability</span>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Opportunity Rating</div>
+        <div class="score-val-row">
+          <span class="score-number">30</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-green">Targeted Wedge</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Executive Briefing -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Executive Briefing</span>
+      </div>
+      <p class="executive-text">Cognee has established clear product-market alignment in the LLM developer ecosystem, leveraging open-source distribution and recent Product Hunt pushes to capture early market share. Despite this inbound velocity, their conversion stack exhibits noticeable technical leaks: landing page traffic is unmonetized due to a missing Meta retargeting pixel, search indexing is exposed via a misconfigured robots.txt, and there is no structured lead capture form prior to call booking. Operating without full-time marketing hires, Cognee is primed for fractional growth optimization to systematically capture and retarget high-intent technical buyers.</p>
+    </div>
+
+    <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Brand & Cross-Channel Messaging Coherence</span>
+      </div>
+      <div class="coherence-box">
+        <div class="coherence-header-row">
+          <span class="coherence-status-pill">Moderate Technical Alignment with Channel Dispersion</span>
+          <span class="coherence-score-badge">Coherence Score: 7.2 / 10</span>
+        </div>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">High Developer Alignment</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Fragmented Multi-Channel Footprint</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">Unified Engineering Persona</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">Cognee delivers sharp, technical positioning across its core developer hubs on GitHub, Discord, X, and LinkedIn, maintaining an uncompromising engineering tone focused on context persistence for AI agents. However, brand coherence degrades on consumer-facing channels like Instagram and TikTok, which remain inactive and dilute overall channel focus. Additionally, while the site directs users toward booking calls and signing up, the lack of tracking infrastructure creates a disconnect between top-of-funnel traffic and lifecycle marketing.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Developer channels (GitHub, Discord) are highly active, but web visitors bounce unmonetized due to missing paid retargeting pixels (Meta Pixel).</li><li>Presence on consumer-centric handles (TikTok, Instagram) dilutes focus away from high-intent technical platforms like YouTube and LinkedIn.</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Prune inactive consumer handles and concentrate content output on YouTube video walkthroughs and technical LinkedIn breakdowns, while installing full-funnel remarketing pixels on cognee.ai.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Weaknesses & Opportunities (2-Column Layout) -->
+    <div class="split-grid">
+      <div class="split-panel">
+        <div class="panel-title title-weakness">
+          <span>Identified Weaknesses & Growth Impact</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item weakness-item"><strong>No Meta Pixel detected</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Non-converting website visitors bounce unmonetized; company cannot run high-ROI paid social retargeting on Instagram/Facebook to recapture warm leads.</div></li><li class="panel-item weakness-item"><strong>Missing or misconfigured robots.txt file</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Fails to guide search engine crawl budgets and risks indexing administrative routes.</div></li><li class="panel-item weakness-item"><strong>No active marketing job openings despite having a careers portal</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Signals lean commercial headcount ripe for fractional campaign execution.</div></li>
+        </ul>
+      </div>
+
+      <div class="split-panel">
+        <div class="panel-title title-opportunity">
+          <span>Strategic Pitch Angles</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item opportunity-item">🚀 Fractional Marketing Support: 'I saw your business is scaling, but there are no dedicated in-house marketing listings open. I help fast-growing teams execute high-impact campaigns on a flexible, fractional basis.'</li><li class="panel-item opportunity-item">🎯 Paid Social Retargeting: 'I ran a quick pixel check and noticed you don't have a Meta pixel active on your site. You are missing out on retargeting visitors who leave without converting.'</li><li class="panel-item opportunity-item">📰 PR / Recent Event Icebreaker: 'Congrats on the recent coverage: "cognee: Memory for AI Agents in 6 lines of code - Product Hunt"! Loved seeing your momentum in the industry.'</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. Social Media Activity Status & Posting Frequency -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Digital & Channel Footprint (Activity Status)</span>
+      </div>
+
+      <!-- Channel Grid (3x2) -->
+      <div class="channel-status-grid">
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">LinkedIn</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.linkedin.com/company/cognee-ai" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">X (Twitter)</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://x.com/i/status/1971594493259599897" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">YouTube</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.youtube.com/@cognee-ef/featured" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Instagram</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.instagram.com/cognee" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">TikTok</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><a href="https://www.tiktok.com/@cognee.ai" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Facebook</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
+        </div>
+      </div>
+
+      <!-- Newsletter Status Row -->
+      <div class="newsletter-row"><span style="color: var(--text-secondary);">Email Newsletter & Lead Capture:</span><span class="status-pill status-active">Active</span></div>
+
+      <!-- Posting Frequency Chart -->
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
+          <span class="data-window-caption">Estimated from public posts and repository activity, last 90 days</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="postingFrequencyChart"></canvas>
+        </div>
+        <p class="companion-text">
+          <strong>Channel Activity Interpretation:</strong> Heavy developer distribution centered on X, LinkedIn, Discord, and GitHub. Video content on YouTube is underutilized despite developer demand for architecture walkthroughs.</p>
+      </div>
+    </div>
+
+    <!-- 7. Strongest Growth Channel Analysis -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Growth Channel Strength Analysis</span>
+      </div>
+
+      <div class="growth-meters-list">
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Developer Community &amp; Open-Source Social</span>
+            <span class="meter-score">85 / 100 — Strong Existing Channel</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-teal" style="width: 85%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Inbound Technical Documentation &amp; Blog</span>
+            <span class="meter-score">65 / 100 — Moderate Foundation</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-blue" style="width: 65%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Technical SEO &amp; AI Search Indexing (GEO)</span>
+            <span class="meter-score">35 / 100 — Underdeveloped Lever</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-amber" style="width: 35%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Paid Retargeting &amp; Audience Remarketing</span>
+            <span class="meter-score">10 / 100 — Severe Leak / Untapped</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-rose" style="width: 10%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="companion-text">
+        <strong>Strategic Pitch Rationale:</strong> Cognee successfully generates technical traffic through open-source advocacy and launch spikes, but loses warm leads because no remarketing infrastructure exists on cognee.ai. Fixing the missing Meta pixel alongside robots.txt search configuration delivers an immediate conversion lift without requiring new content engines.</p>
+    </div>
+
+    
+    <!-- 7.5 Post-Level Content Teardown & Optimization (AI Audit) -->
+    <div class="card" id="postLevelAnalysisCard" style="margin-bottom:20px;">
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <span class="section-title">Post-by-Post Content Teardown & Optimization</span>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Granular post critiques, live visual previews, and purpose-matched rewrites grounded in the Isis Knowledge Base.</p>
+        </div>
+        <span class="status-pill status-active" style="font-size:10.5px; background:rgba(15,118,110,0.12); color:#0F766E;">3 Posts Audited</span>
+      </div>
+      <div style="margin-top:16px;">
+        
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/cognee-ai_join-our-webinar-on-tuesday-22-september-activity-7503074760608690178-GE34" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://media.licdn.com/dms/image/v2/D4D22AQFWFq0dDipGUA/feedshare-image-high-res/B4DaCBGu94JQAU-/0/1788872421534?e=1790812800&amp;v=beta&amp;t=a9Jwr_PsASFARWAuGFqf0VtZebpku2tBnzbpgR0efb0" 
+               alt="LINKEDIN Image Post: Join our webinar on Tuesday 22 September. Most AI rollouts stall in the sam..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Join our webinar on Tuesday 22 September.<br><br>Most AI rollouts stall in the same place. The agent has no access to what the company already knows, so every answer it gives is a guess delivered with confidence.<br><br>Our founder and CEO Vasilije Markovic spends 45 minutes on what a company brain is and how cognee becomes the backbone of one. It&#x27;s a live walkthrough of the platform, plus the routines and workflows cognee&#x27;s own customers use for human-to-agent collaboration.<br><br>Concretely: pulling structured data out of Slack, GitHub, Linear and your company drive, then linking people, messages, decisions and agent traces into one graph you can query.<br><br>He closes on scoping. How to pick a first use case, and what most commonly stalls a rollout before it gets going.<br><br>Tuesday 22 September, 20:00 to 20:45 CEST<br>11:00 AM PT / 2:00 PM ET<br>Online, on Zoom<br>For developers, technical leads and SMB teams evaluating AI<br><br>Register here: luma.com/cognee-flfx
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The post establishes a high-value technical problem (&#x27;AI rollouts stall... agent has no access to company knowledge&#x27;), but placing an external URL directly in the body copy incurs a severe distribution penalty from LinkedIn&#x27;s ranking system <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>. Leading with &#x27;Join our webinar&#x27; puts administrative logistics ahead of immediate educational value <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[This Is Marketing Summary - Seth Godin]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_1')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_1" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Most enterprise AI agents are high-confidence guess generators because they lack access to internal contextual knowledge.
+
+When agents can&#x27;t tap into company memory, rollouts stall.
+
+In this technical walkthrough, our founder Vasilije Markovic breaks down how to construct a true company brain using cognee as the memory backbone.
+
+What we will cover live:
+- Connecting unstructured data across Slack, GitHub, Linear, and Drive
+- Linking team decisions, code commits, and agent execution traces into a queryable graph
+- Concrete routines used by engineering teams for human-agent collaboration
+- How to scope your initial use case without hitting common deployment bottlenecks
+
+📅 Tuesday, September 22
+⏰ 11:00 AM PT / 2:00 PM ET / 20:00 CEST
+📍 Online / Zoom
+🎯 Built for technical leads, developers, and AI engineers
+
+Link to register is in the first comment below. 👇
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Join our webinar on Tuesday 22 September.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Most enterprise AI agents are high-confidence guess generators because they lack access to internal contextual knowledge.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Swaps an administrative call-to-action for an unexpected, high-arousal problem hook that creates a curiosity gap. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Register here: luma.com/cognee-flfx (in main post body)</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Link to register is in the first comment below. 👇</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Prevents the significant reach suppression triggered by 360Brew when external links are included in the post text. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Dense paragraph detailing webinar agenda.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Scannable bulleted list highlighting specific architectural takeaways.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Improves readability and dwell time by using visual formatting and structured copy blocks. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[The Adweek Copywriting Handbook]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Text</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/cognee-ai_berlin-to-san-francisco-is-9108-km-my-talk-activity-7501661262859374592-W7YX" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; border-radius:6px; border:1px dashed var(--border-medium); background:var(--bg-app); display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-secondary); font-size:11px; text-align:center; padding:8px;">
+          <span style="font-size:18px;">📝</span>
+          <span style="font-weight:600; margin-top:4px;">Text / Status Post</span>
+          <span style="font-size:9.5px; opacity:0.7; margin-top:2px;">(No media attached)</span>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            It is 1000% worth flying 12 hours to talk for 5 minutes, says our founder Vasilije Markovic. Come along and see why.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          This minimal teaser lacks contextual substance, making it resemble low-effort engagement bait that 360Brew penalizes <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>. Without delivering a clear technical insight or completing the narrative, the post fails to capture dwell time or provide social currency to the reader <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Contagious - Jonah Berger]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_2')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_2" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Is flying 9,000 km for a 5-minute talk crazy?
+
+Not when you&#x27;re demonstrating local knowledge graph extraction in front of room full of AI engineers.
+
+Our founder Vasilije Markovic flew from Berlin to San Francisco to show how cognee enables memory and context graphs running on local hardware—without sending customer data to external LLM endpoints.
+
+Here are 3 core takeaways from the presentation:
+1. Why centralized AI labs aren&#x27;t solving the enterprise context problem
+2. How local models running on CPU/edge can handle complex entity extraction
+3. The exact architecture needed to turn raw team chatter into a structured graph
+
+If you&#x27;re building local-first or privacy-conscious AI workflows, drop a comment below and I&#x27;ll send over the session slides.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">It is 1000% worth flying 12 hours to talk for 5 minutes, says our founder Vasilije Markovic. Come along and see why.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Is flying 9,000 km for a 5-minute talk crazy? Not when you&#x27;re demonstrating local knowledge graph extraction in front of room full of AI engineers.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Transforms a vague teaser into a structured story narrative (Challenge/Creativity pattern) that highlights unique technical attributes. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">No technical detail provided.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">3-point summary covering local models, CPU execution, and context architecture.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Provides practical value and educational reference content designed to drive saves and comments rather than quick scrolls. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 - Hootsuite]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Come along and see why.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">If you&#x27;re building local-first or privacy-conscious AI workflows, drop a comment below and I&#x27;ll send over the session slides.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces passive broadcast phrasing with an invitation for genuine back-and-forth professional engagement. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[This Is Marketing Summary - Seth Godin]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/cognee-ai_recap-of-the-fastino-labs-x-cognee-event-activity-7502735564970872833-gdsu" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://media.licdn.com/dms/image/v2/D4D22AQER_-fGxXc7MA/feedshare-shrink_1280/B4DaB8SPKkXcAM-/0/1788791550939?e=1790812800&amp;v=beta&amp;t=OPv2E-SrvS1u2bHVdc2HfKaXTveJi3740I7j46pDKrw" 
+               alt="LINKEDIN Image Post: Recap of the Fastino Labs x cognee event on Thursday: A knowledge graph bui..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Recap of the Fastino Labs x cognee event on Thursday: <br><br>A knowledge graph built on a laptop, with zero LLM calls.<br><br>That was the demo at our meetup with Fastino Labs in the Berlin office last Thursday.<br><br>Mary Newhauser opened with GLiNER2, Fastino&#x27;s 205M-parameter extraction model that pulls entities and relations out of text in a single forward pass, on CPU.<br><br>Vasilije Markovic followed with &quot;AI Labs Are Not Your Friend, Memory and Local Models Are&quot;.<br><br>Then the two went together: GLiNER2 as the extraction backend inside cognee&#x27;s cognify pipeline. <br><br>Thanks to Mary Newhauser and the Fastino Labs team, and to everyone who came out to our office.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The post showcases an impressive technical milestone (&#x27;knowledge graph built on a laptop, with zero LLM calls&#x27;), but anchors it as a generic post-event recap <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Obviously Awesome by April Dunford]</span>. Positioning the breakthrough as an educational breakdown rather than a company announcement drives higher dwell time and bookmarking behavior <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_3')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_3" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+How to extract a dynamic knowledge graph on a standard laptop with zero LLM API calls:
+
+Last Thursday at our Berlin office, we paired Fastino Labs&#x27; GLiNER2 model with cognee&#x27;s cognify pipeline to prove local extraction works on modest hardware.
+
+Here is how the technical stack functions:
+
+1️⃣ Entity Extraction (Fastino GLiNER2)
+Using a 205M-parameter model, GLiNER2 extracts entities and complex relationships out of raw text in a single forward pass directly on CPU.
+
+2️⃣ Graph Structuring (cognee Cognify Pipeline)
+cognee ingests those extracted entities and links messages, code commits, and decisions into a persistent graph structure.
+
+3️⃣ Zero Cloud Dependency
+Because extraction runs locally without external LLM calls, enterprise data remains private, deterministic, and cost-efficient.
+
+Special thanks to Mary Newhauser and the Fastino Labs team for building alongside us.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Recap of the Fastino Labs x cognee event on Thursday:</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">How to extract a dynamic knowledge graph on a standard laptop with zero LLM API calls:</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Reframes a company-centric recap headline into a high-value, problem-oriented tutorial hook. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Obviously Awesome by April Dunford]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Paragraph describing the talks chronologically.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Numbered architectural breakdown (1️⃣ Entity Extraction, 2️⃣ Graph Structuring, 3️⃣ Zero Cloud Dependency).</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Formats technical differentiators into save-worthy reference documentation, which carries up to 5x the algorithmic weight of a standard like. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Vasilije Markovic followed with &#x27;AI Labs Are Not Your Friend, Memory and Local Models Are&#x27;.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Because extraction runs locally without external LLM calls, enterprise data remains private, deterministic, and cost-efficient.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Translates provocative talk titles into tangible customer value and key positioning attributes. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Obviously Awesome by April Dunford]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- 8. Outreach Angle & Message Starter -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Recommended Outreach Strategy</span>
+        <span class="status-pill status-active" style="font-size: 10px;">Primary Wedge</span>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+          <span class="outreach-angle-tag">Technical Conversion Leak &amp; Retargeting Infrastructure</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
+          <strong>Why this angle:</strong> Cognee drives strong developer intent from GitHub and launches, but lacks the basic retargeting layer needed to re-engage site visitors who bounce without booking a call.</p>
+      </div>
+
+      <!-- Copyable Message Box -->
+      <div class="message-draft-box" style="border:1px solid var(--border-medium); border-radius:8px; background:var(--bg-surface); padding:16px;">
+        <div class="draft-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+          <div>
+            <span class="draft-label" style="font-size:12px; font-weight:700; color:var(--text-primary);">Draft Cold Outreach Message // Personalized for Hi Cognee Leadership</span>
+            <span style="display:inline-block; margin-left:8px; font-size:10.5px; color:#D97706; background:rgba(217,119,6,0.1); padding:1px 6px; border-radius:4px; font-weight:600;">Editable Scratchpad (Click to Edit)</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="copy-btn" onclick="resetOutreachMessage()" style="background:transparent; border:1px solid var(--border-medium); color:var(--text-secondary); font-size:11.5px; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:500;">
+              🔄 Reset to Original
+            </button>
+            <button class="copy-btn" id="mainCopyBtn" onclick="copyEditableMessage()" style="background:#0F766E; color:#fff; border:none; font-size:11.5px; padding:4px 10px; border-radius:4px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copyBtnText">Copy Outreach</span>
+            </button>
+          </div>
+        </div>
+        
+        <div id="outreachMessageText" 
+             contenteditable="true" 
+             data-original="Hi Cognee Leadership, I noticed Cognee is picking up serious momentum in the AI agent space, especially with your graph and vector memory engine launch on Product Hunt. However, checking cognee.ai under the hood, you&#x27;re currently letting warm developer traffic bounce unmonetized without a Meta retargeting pixel active, alongside a misconfigured robots.txt affecting search crawl efficiency. Fixing these two technical leaks would allow you to automatically recapture high-intent engineering leads across LinkedIn and social without adding marketing headcount. Open to me sending over a 2-minute video teardown showing how to patch this?"
+             style="min-height:160px; font-size:13.5px; line-height:1.65; color:var(--text-primary); font-family:inherit; white-space:pre-wrap; outline:none; padding:10px; border-radius:6px; border:1px dashed var(--border-medium); transition:border-color 0.2s;"
+             onfocus="this.style.borderColor='#0F766E'; this.style.background='rgba(15,118,110,0.02)';"
+             onblur="this.style.borderColor='var(--border-medium)'; this.style.background='transparent';">Hi Cognee Leadership, I noticed Cognee is picking up serious momentum in the AI agent space, especially with your graph and vector memory engine launch on Product Hunt. However, checking cognee.ai under the hood, you&#x27;re currently letting warm developer traffic bounce unmonetized without a Meta retargeting pixel active, alongside a misconfigured robots.txt affecting search crawl efficiency. Fixing these two technical leaks would allow you to automatically recapture high-intent engineering leads across LinkedIn and social without adding marketing headcount. Open to me sending over a 2-minute video teardown showing how to patch this?</div>
+
+        <div style="font-size:11px; color:var(--text-secondary); margin-top:8px; display:flex; align-items:center; gap:4px;">
+          <span>ℹ️ Note: Edits made in this scratchpad are temporary and not saved on page refresh.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Marketing Jobs Available -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Marketing Hiring Activity (0 Open Roles — Fractional Target)</span>
+      </div>
+      <div class="jobs-list">
+
+        <div class="job-item">
+          <span class="job-role">No active in-house marketing listings found</span>
+          <span class="job-location">Fractional Outreach Candidate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Target Decision Makers -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Target Decision Makers (1 Available)</span>
+      </div>
+      <div class="dm-list">
+
+        <div class="dm-card" style="border: 1px dashed var(--border-medium);">
+          <div class="dm-info">
+            <div class="dm-avatar" style="background: rgba(15, 118, 110, 0.10); color: #0F766E;">🔍</div>
+            <div>
+              <div class="dm-name">Find Cognee Marketing Decision Makers</div>
+              <div class="dm-title">Live LinkedIn Sales Navigator & People Search Query</div>
+            </div>
+          </div>
+          <a href="https://www.linkedin.com/search/results/people/?keywords=Cognee%20Head%20of%20Marketing%20OR%20VP%20Marketing%20OR%20Founder" target="_blank" class="dm-action-btn" style="background: #0F766E; color: #FFFFFF; border-color: #0F766E;">
+            <span>Search Decision Makers on LinkedIn ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart.js & Clipboard Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const ctx = document.getElementById('postingFrequencyChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
+          datasets: [{
+            label: 'Estimated Posts / Week',
+            data: [3.0, 5.0, 0.2, 0.0, 0.0, 0.0],
+            backgroundColor: ["#3B5F8A", "#5C5648", "#B45309", "#B45309", "#EDE3D3", "#EDE3D3"],
+            borderColor: [
+              'rgba(59, 95, 138, 0.3)',
+              'rgba(92, 86, 72, 0.3)',
+              'rgba(184, 72, 63, 0.3)',
+              'rgba(168, 90, 148, 0.3)',
+              'rgba(60, 50, 35, 0.12)',
+              'rgba(60, 50, 35, 0.12)'
+            ],
+            borderWidth: 1,
+            borderRadius: 4,
+            borderSkipped: false,
+            barThickness: 26
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#2A2420',
+              titleColor: '#FBF7F0',
+              bodyColor: '#EDE3D3',
+              borderColor: 'rgba(60, 50, 35, 0.15)',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return context.parsed.y + ' posts / week';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#6B5F52',
+                font: { family: "'Inter', sans-serif", size: 11, weight: '500' }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 5,
+              grid: {
+                color: 'rgba(60, 50, 35, 0.08)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9C9082',
+                font: { family: "'JetBrains Mono', monospace", size: 10 },
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    });
+
+    function copyEditableMessage() {
+      const text = document.getElementById('outreachMessageText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copyBtnText');
+        const orig = btnText.innerText;
+        btnText.innerText = '✓ Copied!';
+        setTimeout(() => { btnText.innerText = orig; }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+
+    function resetOutreachMessage() {
+      const el = document.getElementById('outreachMessageText');
+      const original = el.getAttribute('data-original');
+      if (original) {
+        el.innerText = original;
+        const btnText = document.getElementById('copyBtnText');
+        btnText.innerText = 'Reset Done';
+        setTimeout(() => { btnText.innerText = 'Copy Outreach'; }, 1500);
+      }
+    }
+
+    function copySpecificText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Rewrite copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+
+</body>
+</html>
