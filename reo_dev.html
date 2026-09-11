@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isis Intelligence Brief — Reo.Dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      /* Base surfaces */
+      --bg-app: #F5EEE4;              /* soft almond beige base */
+      --bg-surface: #FBF7F0;          /* card background, slightly lighter */
+      --bg-surface-raised: #FFFFFF;   /* raised elements — pills, avatars */
+      --bg-subtle: #EDE3D3;           /* hover states, subtle fills */
+
+      /* Borders */
+      --border-subtle: rgba(60, 50, 35, 0.08);
+      --border-medium: rgba(60, 50, 35, 0.16);
+
+      /* Text */
+      --text-primary: #2A2420;        /* near-black warm charcoal, not pure black */
+      --text-secondary: #6B5F52;      /* warm grey-brown */
+      --text-tertiary: #9C9082;       /* muted taupe for labels/timestamps */
+
+      /* Tier badges */
+      --accent-tier1-text: #A8681A;
+      --accent-tier1-bg: rgba(214, 149, 56, 0.14);
+      --accent-tier1-border: rgba(214, 149, 56, 0.30);
+
+      --accent-tier2-text: #B08900;
+      --accent-tier2-bg: rgba(212, 168, 0, 0.12);
+
+      --accent-tier3-text: #8A8072;
+      --accent-tier3-bg: rgba(138, 128, 114, 0.12);
+
+      /* Potential Score — teal */
+      --accent-teal-text: #0F766E;
+      --accent-teal-bg: rgba(15, 118, 110, 0.10);
+      --accent-teal-border: rgba(15, 118, 110, 0.22);
+
+      /* Opportunity Rating / positive signals */
+      --accent-green-text: #15803D;
+      --accent-green-bg: rgba(21, 128, 61, 0.10);
+      --accent-green-border: rgba(21, 128, 61, 0.20);
+
+      /* Amber warnings */
+      --accent-amber-text: #B45309;
+      --accent-amber-bg: rgba(217, 119, 6, 0.12);
+      --accent-amber-border: rgba(217, 119, 6, 0.24);
+
+      /* Weaknesses / warnings */
+      --accent-rose-text: #B8433A;
+      --accent-rose-bg: rgba(184, 67, 58, 0.10);
+      --accent-rose-border: rgba(184, 67, 58, 0.20);
+
+      /* Per-channel colors for charts */
+      --channel-linkedin: #3B5F8A;
+      --channel-x: #5C5648;
+      --channel-youtube: #B8483F;
+      --channel-instagram: #A85A94;
+      --channel-tiktok: #2E8B84;
+      --channel-facebook: #4A6FA5;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --card-shadow: 0 1px 3px rgba(60, 50, 35, 0.05), 0 1px 2px rgba(60, 50, 35, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 36px 20px 60px;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    /* Top Bar with Isis Rebrand */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .system-label {
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .audit-date {
+      color: var(--text-secondary);
+    }
+
+    /* Header Section */
+    .header-section {
+      margin-bottom: 16px;
+    }
+
+    .company-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .company-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .tier-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .badge-tier {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: var(--accent-tier1-bg);
+      color: var(--accent-tier1-text);
+      border: 1px solid var(--accent-tier1-border);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .tier-rationale {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      text-align: right;
+      max-width: 340px;
+      line-height: 1.4;
+    }
+
+    .website-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .website-link:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    .website-link svg {
+      width: 13px;
+      height: 13px;
+      opacity: 0.8;
+    }
+
+    /* What They Do Hero Box */
+    .what-they-do-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-left: 4px solid #0F766E;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 16px 0 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .what-they-do-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .what-they-do-text {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    /* Basic Summary & Sector Context Grid */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .basic-summary-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .overview-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .basic-summary-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .sector-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .sector-tag {
+      display: inline-block;
+      background: rgba(60, 50, 35, 0.06);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .sector-text {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Firmographics Card */
+    .firmographics-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .firmographic-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Scores Grid */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .score-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .score-val-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .score-number {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .score-scale {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .score-badge-inline {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .score-badge-teal {
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+    }
+
+    .score-badge-green {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    /* Main Section Card */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    /* Brand Messaging Coherence Audit Box */
+    .coherence-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 4px;
+    }
+
+    .coherence-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .coherence-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      background: rgba(15, 118, 110, 0.10);
+      color: #0F766E;
+      border: 1px solid rgba(15, 118, 110, 0.25);
+    }
+
+    .coherence-status-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-critique-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Executive Briefing */
+    .executive-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.65;
+    }
+
+    /* Weaknesses & Opportunities 2-Column Split */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .split-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .panel-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .title-weakness {
+      color: var(--accent-rose-text);
+    }
+
+    .title-opportunity {
+      color: var(--accent-green-text);
+    }
+
+    .panel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-item {
+      font-size: 12.5px;
+      line-height: 1.5;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+    }
+
+    .weakness-item {
+      background: var(--accent-rose-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-rose-border);
+    }
+
+    .opportunity-item {
+      background: var(--accent-green-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-green-border);
+    }
+
+    /* Channels Grid */
+    .channel-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .channel-card {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .channel-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .channel-name-tag {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-active {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    .status-dormant {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber-text);
+      border: 1px solid var(--accent-amber-border);
+    }
+
+    .status-inactive {
+      background: var(--bg-subtle);
+      color: var(--text-tertiary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .newsletter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 12.5px;
+    }
+
+    /* Posting Frequency Chart Box */
+    .chart-container {
+      position: relative;
+      height: 200px;
+      width: 100%;
+      margin: 10px 0 14px;
+    }
+
+    .data-window-caption {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+    }
+
+    .companion-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Strongest Growth Channel Analysis */
+    .growth-meters-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .growth-meter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .meter-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .meter-name {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .meter-score {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 7px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .meter-teal { background: #0F766E; }
+    .meter-blue { background: #3B5F8A; }
+    .meter-amber { background: #B45309; }
+    .meter-rose { background: #B8433A; }
+
+    /* Outreach Strategy & Message Box */
+    .outreach-angle-tag {
+      display: inline-block;
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .message-draft-box {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      box-shadow: 0 1px 2px rgba(60, 50, 35, 0.04);
+    }
+
+    .draft-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-subtle);
+    }
+
+    .draft-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--text-tertiary);
+    }
+
+    .draft-content {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Jobs Section */
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .job-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .job-role {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .job-location {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Decision Makers Section */
+    .dm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dm-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .dm-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dm-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .dm-name {
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text-primary);
+    }
+
+    .dm-title {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .dm-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .dm-action-btn:hover {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 680px) {
+      .overview-grid, .scores-grid, .split-grid, .firmographics-card {
+        grid-template-columns: 1fr;
+      }
+      .channel-status-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Status Bar -->
+    <div class="top-bar">
+      <span class="system-label">Isis // Intelligence Brief</span>
+      <span class="audit-date">Analyzed: September 11, 2026 | Live Growth Intelligence & Acquisition Stack</span>
+    </div>
+
+    <!-- 1. Header (Company Name, Website, Tier Badge + Dynamic Rationale) -->
+    <header class="header-section">
+      <div class="company-title-row">
+        <div>
+          <h1 class="company-name">Reo.Dev</h1>
+        </div>
+        <div class="tier-wrapper">
+          <div class="badge-tier">
+            <span class="badge-dot"></span>
+            Tier 2 (Medium Potential)
+          </div>
+          <span class="tier-rationale">Tier B classification driven by high strategic fit in developer GTM intelligence, offset by untapped retargeting levers and missing structured AI data.</span>
+        </div>
+      </div>
+      <a href="https://reo.dev" target="_blank" class="website-link">
+        reo.dev
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </header>
+
+    <!-- 2. What The Company Does (Core Value Proposition) -->
+    <div class="what-they-do-card">
+      <span class="what-they-do-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        What They Do & Core Value Proposition
+      </span>
+      <p class="what-they-do-text">
+        Reo.Dev builds a technical Go-To-Market (GTM) platform that converts developer intent signals—such as open-source activity, documentation visits, and API usage—into qualified sales leads for B2B developer tool companies. Its software helps revenue teams identify, prioritize, and close technical buyers using agentic GTM workflows.
+      </p>
+    </div>
+
+    <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
+    <div class="overview-grid">
+      <div class="basic-summary-box">
+        <span class="overview-label">Commercial Market Posture</span>
+        <p class="basic-summary-text">
+          Reo.Dev holds strong category momentum within the developer-led growth niche, supported by a functional HubSpot and Webflow stack. However, critical conversion leaks—namely missing Meta retargeting pixels and zero Schema.org AI search indexing—throttle top-of-funnel efficiency.
+        </p>
+      </div>
+
+      <div class="sector-box">
+        <span class="overview-label">Sector Context</span>
+        <div>
+          <span class="sector-tag">B2B SaaS — Developer Intent &amp; GTM Intelligence</span>
+        </div>
+        <p class="sector-text">
+          Fast-growing B2B market where technical founders require precise intent data to replace cold outbound. Sales cycles depend heavily on demonstrating quantifiable ROI to revenue and product leaders.
+        </p>
+      </div>
+    </div>
+    
+    <!-- 2c. Tech Stack & Page Speed -->
+    <div class="overview-grid">
+      <div class="sector-box">
+        <span class="overview-label">Detected Tech Stack</span>
+        <div style="margin-top: 8px;">
+          <span class="sector-tag" style="margin-right: 4px; margin-bottom: 4px; display: inline-block;">HubSpot</span> <span class="sector-tag" style="margin-right: 4px; margin-bottom: 4px; display: inline-block;">Webflow</span>
+        </div>
+      </div>
+      <div class="basic-summary-box" style="align-items: center; justify-content: center; text-align: center;">
+        <span class="overview-label">Mobile PageSpeed Score</span>
+        <div class="score-val-row" style="margin-top: 5px;">
+          <span class="score-number">—</span>
+          <span class="score-scale">/ 100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2d. Firmographics Stats Row -->
+    <div class="firmographics-card">
+      <div class="firmographic-stat">
+        <span class="stat-label">Employee Count</span>
+        <span class="stat-value">Unknown</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Funding & Stage</span>
+        <span class="stat-value">Unknown (Unknown)</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Founded Year</span>
+        <span class="stat-value">2023</span>
+      </div>
+    </div>
+
+    <!-- 3. Score Overview -->
+    <div class="scores-grid">
+      <div class="score-card">
+        <div class="score-label">Potential Score</div>
+        <div class="score-val-row">
+          <span class="score-number">70</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-teal">Moderate Viability</span>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Opportunity Rating</div>
+        <div class="score-val-row">
+          <span class="score-number">30</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-green">Targeted Wedge</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Executive Briefing -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Executive Briefing</span>
+      </div>
+      <p class="executive-text">Reo.Dev has carved out an exceptional position in the developer intent landscape with its &#x27;Technical GTM Mesh&#x27; value proposition. The Webflow site drives demo requests via HubSpot, but conversion leaks are actively dampening ROI. High-intent traffic bounces off the site unmonetized due to a missing Meta retargeting pixel, while a lack of Schema.org JSON-LD markup renders the brand invisible to AI search tools like ChatGPT and Perplexity. Fixing these technical gaps represents a low-friction opportunity to lift pipeline velocity.</p>
+    </div>
+
+    <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Brand & Cross-Channel Messaging Coherence</span>
+      </div>
+      <div class="coherence-box">
+        <div class="coherence-header-row">
+          <span class="coherence-status-pill">Moderate Cross-Channel Alignment</span>
+          <span class="coherence-score-badge">Coherence Score: 7.8 / 10</span>
+        </div>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">High Consistency</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">LinkedIn-Centric Footprint</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">Unified Technical Tone</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">Reo.Dev maintains sharp, technical positioning on its website around developer signals and agentic GTM workflows. Their LinkedIn activity mirrors this positioning well, consistently targeting technical revenue leaders. However, secondary channels like YouTube are dormant, missing an opportunity to visually showcase product mechanics and agentic workflows to technical buyers.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Website promotes agentic technical workflows, but video channels (YouTube) lack product walkthroughs and interactive proof points.</li><li>Complete absence of Meta retargeting pixel prevents continuous visual narrative distribution to site visitors across non-LinkedIn platforms.</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Repurpose technical LinkedIn content into short-form YouTube product breakdowns, and deploy cross-channel retargeting pixels to ensure site visitors receive continuous proof-of-value.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Weaknesses & Opportunities (2-Column Layout) -->
+    <div class="split-grid">
+      <div class="split-panel">
+        <div class="panel-title title-weakness">
+          <span>Identified Weaknesses & Growth Impact</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item weakness-item"><strong>No Schema.org / JSON-LD structured data found</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Invisibility in modern AI search engines (ChatGPT, Perplexity, Claude), preventing AI answer bots from recommending your product.</div></li><li class="panel-item weakness-item"><strong>No Meta Pixel detected</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Non-converting website visitors bounce unmonetized; company cannot run high-ROI paid social retargeting on Instagram/Facebook to recapture warm leads.</div></li><li class="panel-item weakness-item"><strong>No active marketing job openings despite having a careers portal</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Signals lean commercial headcount ripe for fractional campaign execution.</div></li>
+        </ul>
+      </div>
+
+      <div class="split-panel">
+        <div class="panel-title title-opportunity">
+          <span>Strategic Pitch Angles</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item opportunity-item">🚀 Fractional Marketing Support: 'I saw your business is scaling, but there are no dedicated in-house marketing listings open. I help fast-growing teams execute high-impact campaigns on a flexible, fractional basis.'</li><li class="panel-item opportunity-item">🎯 Paid Social Retargeting: 'I ran a quick pixel check and noticed you don't have a Meta pixel active on your site. You are missing out on retargeting visitors who leave without converting.'</li><li class="panel-item opportunity-item">🔍 SEO & AI Discovery Fix: 'When running a technical check on your site, I noticed opportunities to improve your OpenGraph preview tags and add structured schema data so AI engines (ChatGPT/Perplexity) accurately index your products.'</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. Social Media Activity Status & Posting Frequency -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Digital & Channel Footprint (Activity Status)</span>
+      </div>
+
+      <!-- Channel Grid (3x2) -->
+      <div class="channel-status-grid">
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">LinkedIn</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.linkedin.com/company/reo-dev" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">X (Twitter)</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://x.com/i/grok" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">YouTube</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.youtube.com/@ReoDotDev" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Instagram</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><a href="https://www.instagram.com/reodev" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">TikTok</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><a href="https://www.tiktok.com/@reodev" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Facebook</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
+        </div>
+      </div>
+
+      <!-- Newsletter Status Row -->
+      <div class="newsletter-row"><span style="color: var(--text-secondary);">Email Newsletter & Lead Capture:</span><span class="status-pill status-active">Active</span></div>
+
+      <!-- Posting Frequency Chart -->
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
+          <span class="data-window-caption">Estimated from public signals, last 90 days</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="postingFrequencyChart"></canvas>
+        </div>
+        <p class="companion-text">
+          <strong>Channel Activity Interpretation:</strong> Heavy reliance on LinkedIn and X for thought leadership, while visual video channels remain underutilized. Retargeting infrastructure across major ad networks is missing.</p>
+      </div>
+    </div>
+
+    <!-- 7. Strongest Growth Channel Analysis -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Growth Channel Strength Analysis</span>
+      </div>
+
+      <div class="growth-meters-list">
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Organic B2B Social &amp; Thought Leadership</span>
+            <span class="meter-score">75 / 100 — Strong Existing Channel</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-teal" style="width: 75%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Inbound Content &amp; Educational Resources</span>
+            <span class="meter-score">60 / 100 — Moderate Foundation</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-blue" style="width: 60%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Technical SEO &amp; AI Search Indexing (GEO)</span>
+            <span class="meter-score">30 / 100 — Underdeveloped Lever</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-amber" style="width: 30%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Paid Retargeting &amp; Audience Remarketing</span>
+            <span class="meter-score">10 / 100 — Severe Leak / Untapped</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-rose" style="width: 10%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="companion-text">
+        <strong>Strategic Pitch Rationale:</strong> While organic social drives initial site visits, Reo.Dev fails to capture bounce traffic due to a complete lack of Meta retargeting pixels. Furthermore, omitting JSON-LD schema keeps their technical GTM solution hidden from modern AI answer engines, creating an ideal technical entry wedge.</p>
+    </div>
+
+    
+    <!-- 7.5 Post-Level Content Teardown & Optimization (AI Audit) -->
+    <div class="card" id="postLevelAnalysisCard" style="margin-bottom:20px;">
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <span class="section-title">Post-by-Post Content Teardown & Optimization</span>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Granular post critiques, live visual previews, and purpose-matched rewrites grounded in the Isis Knowledge Base.</p>
+        </div>
+        <span class="status-pill status-active" style="font-size:10.5px; background:rgba(15,118,110,0.12); color:#0F766E;">3 Posts Audited</span>
+      </div>
+      <div style="margin-top:16px;">
+        
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/piyush-agarwal-reo_we-implemented-agent-intent-gateway-for-200-activity-7503080889917054977-Zeo9" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://media.licdn.com/dms/image/v2/D5622AQF_2nj1MzVSIw/feedshare-image-high-res/B56aCBMTyLGwAU-/0/1788873883228?e=1790812800&amp;v=beta&amp;t=mQWbZUPYuBdpgWthOgo1nRHqCP_UkcdryAMzblOoVaU" 
+               alt="LINKEDIN Image Post: We implemented Agent Intent Gateway for 200+ top DevTool companies &amp; found ..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            We implemented Agent Intent Gateway for 200+ top DevTool companies &amp; found that over 60% of the docs traffic wasn&#x27;t showing up in their CRM!!🤯<br><br>Right now, a developer could be running a POC for your product right now, and your GTM team could see absolutely nothing.<br><br>That’s because the evaluation is increasingly happening through Claude, Codex, Cursor, and other AI agents. These agents query your docs, call your APIs, invoke your CLI, and test workflows through your MCP server.<br><br>All of this intent was hidden, until now!<br><br>Reo.Dev&#x27;s Agent Intent Gateway helps you map the agent activity, interpret it, and surfaces account-level evaluation context your GTM team can act on!🔥<br><br>→ WHO: the account behind the activity, Acme Corp<br>→ WHAT: comparing your product with alternatives<br>→ STAGE: testing a specific workflow as part of a POC<br>→ FRICTION: repeated authentication questions<br>→ WHEN: two hours ago<br><br>The context and timing are everything here!<br><br>For instance, if a team or their agent is running a POC and repeatedly hitting authentication friction, that isn&#x27;t a generic lead to nurture six weeks from now.<br><br>It&#x27;s a live evaluation your team can prioritize and support while the window is still open.<br><br>The GTM teams that are trying these signals have been able to surface incredible insights to act on!🚀🚀🚀<br><br>Can&#x27;t wait for more of you to start seeing them!💪<br><br>Explore more in the comments👇
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The core observation—that 60% of documentation evaluation traffic is obscured by AI agents—is a powerful wedge hook, but the caption devolves into generic marketing excitement at the finish. Under current algorithm dynamics, replacing vague hype with a structured, referenceable breakdown increases dwell time and bookmarking behavior <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>. Additionally, vague calls to &#x27;explore comments&#x27; act as low-value CTA patterns <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[The Adweek Copywriting Handbook]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_1')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_1" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Over 60% of technical evaluation traffic never hits your CRM.
+
+While your GTM team monitors website sign-ups, developers are running active POCs through Claude, Codex, Cursor, and custom MCP servers. The evaluation is happening—it’s just entirely invisible.
+
+Here is the 5-point telemetry framework required to turn silent AI agent traffic into actionable account pipeline:
+
+1. Account Identification: Resolving reverse-IP and token calls back to domain context (e.g., Acme Corp).
+2. Evaluation Intent: Tracking comparative query paths across your docs and API schemas.
+3. Implementation Stage: Detecting specific CLI invocations that indicate an active workflow build.
+4. Technical Friction Points: Isolating repeated endpoint errors (like authentication loop failures) during execution.
+5. Velocity Cues: Triggering real-time notifications while the evaluation window is open, rather than weeks later.
+
+When an AI agent hits persistent auth errors during a POC, that is not a cold lead for a nurture campaign. It is an active technical evaluation that requires immediate engineering or sales support.
+
+How is your team surfacing agent-driven telemetry this quarter?
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">The GTM teams that are trying these signals have been able to surface incredible insights to act on!🚀🚀🚀 Can&#x27;t wait for more of you to start seeing them!💪 Explore more in the comments👇</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">How is your team surfacing agent-driven telemetry this quarter?</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Eliminates emotional hype and engagement-bait links in favor of an open-ended strategic question that drives organic conversation and comment depth. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn algorithm works in 2026 - Hootsuite]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">→ WHO: the account behind the activity...
+→ WHAT: comparing your product...
+→ STAGE: testing a specific workflow...
+→ FRICTION: repeated authentication...
+→ WHEN: two hours ago</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">1. Account Identification: Resolving reverse-IP and token calls back to domain context...
+2. Evaluation Intent: Tracking comparative query paths...
+3. Implementation Stage: Detecting specific CLI invocations...
+4. Technical Friction Points: Isolating repeated endpoint errors...
+5. Velocity Cues: Triggering real-time notifications...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Transforms informal bullet points into a numbered, high-utility framework that incentivizes post saves (which weight 5x higher than likes). <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Text</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/reo-dev_ai-agents-are-evaluating-your-tools-now-activity-7498011411445542912-pkGr" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; border-radius:6px; border:1px dashed var(--border-medium); background:var(--bg-app); display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-secondary); font-size:11px; text-align:center; padding:8px;">
+          <span style="font-size:18px;">📝</span>
+          <span style="font-weight:600; margin-top:4px;">Text / Status Post</span>
+          <span style="font-size:9.5px; opacity:0.7; margin-top:2px;">(No media attached)</span>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            AI Agents are evaluating your tools now! This is exactly how you capture intent from them! 🚀🚀 🚀 <br> <br>Here&#x27;s what most Tech GTM teams are seeing this year.<br><br>Fewer doc visits. Fewer sign-ups. Fewer website visits. Pipeline drying up.<br><br>This is because more &amp; more agents are researching &amp; evaluating tools on behalf of developers!<br><br>Gartner expects 90% of B2B buying to run through AI agents by 2028. 61% of buyers are already using them!<br><br>The Agent Intent Gateway makes that activity visible🔥 <br><br>→ See which agents are querying your MCP server<br>→ See the prompts behind every evaluation<br>→ Understand what they&#x27;re actually trying to build<br>→ Turn invisible agent activity into pipeline<br><br>You&#x27;ve been using Reo.Dev to understand what developers are up to.<br>NOW DO IT FOR THEIR AGENTS!🔥 <br>LFG 🚀<br><br>More in the comments:)
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          This post relies heavily on generic market statistics and promotional slogans (&#x27;LFG 🚀&#x27;), which the 360Brew algorithm filters out as low-quality sales noise <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>. To succeed, the caption must explain the exact technical mechanism connecting developer agents to CRM pipeline rather than relying on fluff <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Core Positioning &amp; Value Proposition Rules]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_2')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_2" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Traditional technical lead indicators are declining across the board: fewer doc pageviews, lower form fills, and reduced direct website traffic.
+
+The activity hasn&#x27;t vanished—it has shifted to non-human evaluators. Developers are delegating tool discovery, API validation, and schema comparison to autonomous AI agents.
+
+If your pipeline feels quiet, it is likely because your telemetry stops at human browser sessions. To capture non-human evaluation intent, GTM architectures must monitor four critical touchpoints:
+
+• MCP Server Telemetry: Tracking context requests and function calls from IDE-integrated agents.
+• Prompt &amp; Query Analysis: Parsing the underlying developer intent driving automated doc queries.
+• Workflow Validation Signals: Identifying when an agent tests specific integrations against your endpoints.
+• Account Mapping: Associating autonomous agent API calls with enterprise domain accounts.
+
+Capturing developer intent now requires inspecting the autonomous tools acting on their behalf. 
+
+What percentage of your current evaluation traffic do you estimate comes from AI agents?
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">AI Agents are evaluating your tools now! This is exactly how you capture intent from them! 🚀🚀 🚀 ... NOW DO IT FOR THEIR AGENTS!🔥 LFG 🚀 More in the comments:)</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Traditional technical lead indicators are declining across the board: fewer doc pageviews, lower form fills, and reduced direct website traffic...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces headline exclamation marks and &#x27;LFG&#x27; buzzwords with an authoritative, peer-to-peer diagnostic observation. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Core Positioning &amp; Value Proposition Rules]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Gartner expects 90% of B2B buying to run through AI agents by 2028. 61% of buyers are already using them!</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">If your pipeline feels quiet, it is likely because your telemetry stops at human browser sessions. To capture non-human evaluation intent, GTM architectures must monitor four critical touchpoints:</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Swaps third-party analyst statistics for a direct, problem-focused mechanism breakdown that articulates the core product value. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Obviously Awesome by April Dunford]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Text</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/achintyagupta_new-rules-of-dev-marketing-in-the-age-of-ugcPost-7502737516899508224-Wx_p" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; border-radius:6px; border:1px dashed var(--border-medium); background:var(--bg-app); display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-secondary); font-size:11px; text-align:center; padding:8px;">
+          <span style="font-size:18px;">📝</span>
+          <span style="font-weight:600; margin-top:4px;">Text / Status Post</span>
+          <span style="font-size:9.5px; opacity:0.7; margin-top:2px;">(No media attached)</span>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            2024s’ fastest growing Dev Marketing tactics are already obsolete!<br>This week in SF, I’m breaking down what changed, and the New Rules of Technical GTM in the age of AI🔥<br><br>AI is changing some of the most basic assumptions we’ve built Technical GTM around.<br>• Who evaluates your product.<br>• How quickly they go from discovery to actually building.<br>• What signals tell you an account is worth pursuing.<br>• Even what a “technical buyer” looks like.<br><br>And all of this is moving incredibly fast.<br><br>So for my keynote at Developer Marketing Summit this week, I picked 5 Developer Marketing strategies I think we need to rethink, and exactly what we should replace them with.<br><br>📅 September 9, 2026<br>⏰ 11:15–11:45 AM PDT<br>📍 Hyatt Regency San Francisco Airport<br><br>See you here!🙌
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          Event promotion posts that lack embedded educational substance perform poorly because readers scroll past logistics without engaging <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn algorithm works in 2026 - Hootsuite]</span>. Providing concrete &#x27;Old Rule vs. New Rule&#x27; insights directly in the post builds authority and earns saves before inviting attendees to the session <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[The Adweek Copywriting Handbook]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_3')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_3" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+The playbook that built developer pipelines in 2024 is officially failing.
+
+As AI agents take over tool evaluation, the fundamentals of Technical GTM have shifted overnight. Here are 3 core shifts every developer marketing leader needs to navigate right now:
+
+1. Old Rule: Optimize docs for human search and SEO.
+New Rule: Optimize schemas and MCP endpoints for agent ingestion.
+
+2. Old Rule: Track website pageviews and whitepaper downloads as engagement signals.
+New Rule: Monitor API call velocity and automated prompt context queries.
+
+3. Old Rule: Gate product access behind developer email sign-ups.
+New Rule: Enable frictionless agent-assisted evaluation to capture account identity automatically.
+
+I’ll be breaking down all 5 obsolete tactics—and their replacements—during my keynote at the Developer Marketing Summit in SF this week.
+
+🗓️ September 9, 2026 | 11:15 AM PDT
+📍 Hyatt Regency San Francisco Airport
+
+Which classic developer marketing tactic feels most broken in your current stack?
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">AI is changing some of the most basic assumptions we’ve built Technical GTM around.
+• Who evaluates your product.
+• How quickly they go from discovery to actually building.
+• What signals tell you an account is worth pursuing.
+• Even what a “technical buyer” looks like.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">1. Old Rule: Optimize docs for human search...
+New Rule: Optimize schemas...
+2. Old Rule: Track website pageviews...
+New Rule: Monitor API call velocity...
+3. Old Rule: Gate product access...
+New Rule: Enable frictionless agent-assisted evaluation...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Delivers native, highly consumable value directly in the feed, driving dwell time and saving behavior rather than hiding the insights behind a conference talk. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Contagious by Jonah Berger]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">See you here!🙌</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Which classic developer marketing tactic feels most broken in your current stack?</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces a basic closing statement with a specific, conversation-provoking question to generate comment threads. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick by Chip &amp; Dan Heath]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- 8. Outreach Angle & Message Starter -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Recommended Outreach Strategy</span>
+        <span class="status-pill status-active" style="font-size: 10px;">Primary Wedge</span>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+          <span class="outreach-angle-tag">AI Indexing Gap &amp; Unmonetized Retargeting Leak</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
+          <strong>Why this angle:</strong> Because Reo.Dev sells technical GTM intelligence to revenue leaders, pointing out conversion leaks on their own Webflow site establishes immediate peer-level credibility.</p>
+      </div>
+
+      <!-- Copyable Message Box -->
+      <div class="message-draft-box" style="border:1px solid var(--border-medium); border-radius:8px; background:var(--bg-surface); padding:16px;">
+        <div class="draft-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+          <div>
+            <span class="draft-label" style="font-size:12px; font-weight:700; color:var(--text-primary);">Draft Cold Outreach Message // Personalized for Hi Reo.Dev Leadership</span>
+            <span style="display:inline-block; margin-left:8px; font-size:10.5px; color:#D97706; background:rgba(217,119,6,0.1); padding:1px 6px; border-radius:4px; font-weight:600;">Editable Scratchpad (Click to Edit)</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="copy-btn" onclick="resetOutreachMessage()" style="background:transparent; border:1px solid var(--border-medium); color:var(--text-secondary); font-size:11.5px; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:500;">
+              🔄 Reset to Original
+            </button>
+            <button class="copy-btn" id="mainCopyBtn" onclick="copyEditableMessage()" style="background:#0F766E; color:#fff; border:none; font-size:11.5px; padding:4px 10px; border-radius:4px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copyBtnText">Copy Outreach</span>
+            </button>
+          </div>
+        </div>
+        
+        <div id="outreachMessageText" 
+             contenteditable="true" 
+             data-original="Hi Reo.Dev Leadership, loved your focus on turning developer intent signals into agentic GTM workflows. Noticed two technical conversion leaks on reo.dev: there&#x27;s no Schema.org JSON-LD markup for AI search engines like Perplexity/ChatGPT to index your platform, and the Meta Pixel is missing, letting high-intent Webflow visitors bounce unmonetized. Open to me sending over a 2-minute video breakdown on how to fix these gaps and lift demo conversions?"
+             style="min-height:160px; font-size:13.5px; line-height:1.65; color:var(--text-primary); font-family:inherit; white-space:pre-wrap; outline:none; padding:10px; border-radius:6px; border:1px dashed var(--border-medium); transition:border-color 0.2s;"
+             onfocus="this.style.borderColor='#0F766E'; this.style.background='rgba(15,118,110,0.02)';"
+             onblur="this.style.borderColor='var(--border-medium)'; this.style.background='transparent';">Hi Reo.Dev Leadership, loved your focus on turning developer intent signals into agentic GTM workflows. Noticed two technical conversion leaks on reo.dev: there&#x27;s no Schema.org JSON-LD markup for AI search engines like Perplexity/ChatGPT to index your platform, and the Meta Pixel is missing, letting high-intent Webflow visitors bounce unmonetized. Open to me sending over a 2-minute video breakdown on how to fix these gaps and lift demo conversions?</div>
+
+        <div style="font-size:11px; color:var(--text-secondary); margin-top:8px; display:flex; align-items:center; gap:4px;">
+          <span>ℹ️ Note: Edits made in this scratchpad are temporary and not saved on page refresh.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Marketing Jobs Available -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Marketing Hiring Activity (0 Open Roles — Fractional Target)</span>
+      </div>
+      <div class="jobs-list">
+
+        <div class="job-item">
+          <span class="job-role">No active in-house marketing listings found</span>
+          <span class="job-location">Fractional Outreach Candidate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Target Decision Makers -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Target Decision Makers (1 Available)</span>
+      </div>
+      <div class="dm-list">
+
+        <div class="dm-card" style="border: 1px dashed var(--border-medium);">
+          <div class="dm-info">
+            <div class="dm-avatar" style="background: rgba(15, 118, 110, 0.10); color: #0F766E;">🔍</div>
+            <div>
+              <div class="dm-name">Find Reo.Dev Marketing Decision Makers</div>
+              <div class="dm-title">Live LinkedIn Sales Navigator & People Search Query</div>
+            </div>
+          </div>
+          <a href="https://www.linkedin.com/search/results/people/?keywords=Reo.Dev%20Head%20of%20Marketing%20OR%20VP%20Marketing%20OR%20Founder" target="_blank" class="dm-action-btn" style="background: #0F766E; color: #FFFFFF; border-color: #0F766E;">
+            <span>Search Decision Makers on LinkedIn ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart.js & Clipboard Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const ctx = document.getElementById('postingFrequencyChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
+          datasets: [{
+            label: 'Estimated Posts / Week',
+            data: [3.5, 2.0, 0.1, 0.0, 0.0, 0.0],
+            backgroundColor: ["#3B5F8A", "#5C5648", "#B45309", "#EDE3D3", "#EDE3D3", "#EDE3D3"],
+            borderColor: [
+              'rgba(59, 95, 138, 0.3)',
+              'rgba(92, 86, 72, 0.3)',
+              'rgba(184, 72, 63, 0.3)',
+              'rgba(168, 90, 148, 0.3)',
+              'rgba(60, 50, 35, 0.12)',
+              'rgba(60, 50, 35, 0.12)'
+            ],
+            borderWidth: 1,
+            borderRadius: 4,
+            borderSkipped: false,
+            barThickness: 26
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#2A2420',
+              titleColor: '#FBF7F0',
+              bodyColor: '#EDE3D3',
+              borderColor: 'rgba(60, 50, 35, 0.15)',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return context.parsed.y + ' posts / week';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#6B5F52',
+                font: { family: "'Inter', sans-serif", size: 11, weight: '500' }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 5,
+              grid: {
+                color: 'rgba(60, 50, 35, 0.08)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9C9082',
+                font: { family: "'JetBrains Mono', monospace", size: 10 },
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    });
+
+    function copyEditableMessage() {
+      const text = document.getElementById('outreachMessageText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copyBtnText');
+        const orig = btnText.innerText;
+        btnText.innerText = '✓ Copied!';
+        setTimeout(() => { btnText.innerText = orig; }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+
+    function resetOutreachMessage() {
+      const el = document.getElementById('outreachMessageText');
+      const original = el.getAttribute('data-original');
+      if (original) {
+        el.innerText = original;
+        const btnText = document.getElementById('copyBtnText');
+        btnText.innerText = 'Reset Done';
+        setTimeout(() => { btnText.innerText = 'Copy Outreach'; }, 1500);
+      }
+    }
+
+    function copySpecificText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Rewrite copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+
+</body>
+</html>
