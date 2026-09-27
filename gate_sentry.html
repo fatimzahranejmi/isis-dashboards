@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isis Intelligence Brief — Gate Sentry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      /* Base surfaces */
+      --bg-app: #F5EEE4;              /* soft almond beige base */
+      --bg-surface: #FBF7F0;          /* card background, slightly lighter */
+      --bg-surface-raised: #FFFFFF;   /* raised elements — pills, avatars */
+      --bg-subtle: #EDE3D3;           /* hover states, subtle fills */
+
+      /* Borders */
+      --border-subtle: rgba(60, 50, 35, 0.08);
+      --border-medium: rgba(60, 50, 35, 0.16);
+
+      /* Text */
+      --text-primary: #2A2420;        /* near-black warm charcoal, not pure black */
+      --text-secondary: #6B5F52;      /* warm grey-brown */
+      --text-tertiary: #9C9082;       /* muted taupe for labels/timestamps */
+
+      /* Tier badges */
+      --accent-tier1-text: #A8681A;
+      --accent-tier1-bg: rgba(214, 149, 56, 0.14);
+      --accent-tier1-border: rgba(214, 149, 56, 0.30);
+
+      --accent-tier2-text: #B08900;
+      --accent-tier2-bg: rgba(212, 168, 0, 0.12);
+
+      --accent-tier3-text: #8A8072;
+      --accent-tier3-bg: rgba(138, 128, 114, 0.12);
+
+      /* Potential Score — teal */
+      --accent-teal-text: #0F766E;
+      --accent-teal-bg: rgba(15, 118, 110, 0.10);
+      --accent-teal-border: rgba(15, 118, 110, 0.22);
+
+      /* Opportunity Rating / positive signals */
+      --accent-green-text: #15803D;
+      --accent-green-bg: rgba(21, 128, 61, 0.10);
+      --accent-green-border: rgba(21, 128, 61, 0.20);
+
+      /* Amber warnings */
+      --accent-amber-text: #B45309;
+      --accent-amber-bg: rgba(217, 119, 6, 0.12);
+      --accent-amber-border: rgba(217, 119, 6, 0.24);
+
+      /* Weaknesses / warnings */
+      --accent-rose-text: #B8433A;
+      --accent-rose-bg: rgba(184, 67, 58, 0.10);
+      --accent-rose-border: rgba(184, 67, 58, 0.20);
+
+      /* Per-channel colors for charts */
+      --channel-linkedin: #3B5F8A;
+      --channel-x: #5C5648;
+      --channel-youtube: #B8483F;
+      --channel-instagram: #A85A94;
+      --channel-tiktok: #2E8B84;
+      --channel-facebook: #4A6FA5;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --card-shadow: 0 1px 3px rgba(60, 50, 35, 0.05), 0 1px 2px rgba(60, 50, 35, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 36px 20px 60px;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    /* Top Bar with Isis Rebrand */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .system-label {
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .audit-date {
+      color: var(--text-secondary);
+    }
+
+    /* Header Section */
+    .header-section {
+      margin-bottom: 16px;
+    }
+
+    .company-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .company-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .tier-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .badge-tier {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: var(--accent-tier1-bg);
+      color: var(--accent-tier1-text);
+      border: 1px solid var(--accent-tier1-border);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .tier-rationale {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      text-align: right;
+      max-width: 340px;
+      line-height: 1.4;
+    }
+
+    .website-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .website-link:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    .website-link svg {
+      width: 13px;
+      height: 13px;
+      opacity: 0.8;
+    }
+
+    /* What They Do Hero Box */
+    .what-they-do-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-left: 4px solid #0F766E;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 16px 0 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .what-they-do-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .what-they-do-text {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    /* Basic Summary & Sector Context Grid */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .basic-summary-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .overview-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .basic-summary-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .sector-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .sector-tag {
+      display: inline-block;
+      background: rgba(60, 50, 35, 0.06);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .sector-text {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Firmographics Card */
+    .firmographics-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .firmographic-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Scores Grid */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .score-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .score-val-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .score-number {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .score-scale {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .score-badge-inline {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .score-badge-teal {
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+    }
+
+    .score-badge-green {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    /* Main Section Card */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    /* Brand Messaging Coherence Audit Box */
+    .coherence-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 4px;
+    }
+
+    .coherence-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .coherence-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      background: rgba(15, 118, 110, 0.10);
+      color: #0F766E;
+      border: 1px solid rgba(15, 118, 110, 0.25);
+    }
+
+    .coherence-status-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-critique-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Executive Briefing */
+    .executive-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.65;
+    }
+
+    /* Weaknesses & Opportunities 2-Column Split */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .split-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .panel-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .title-weakness {
+      color: var(--accent-rose-text);
+    }
+
+    .title-opportunity {
+      color: var(--accent-green-text);
+    }
+
+    .panel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-item {
+      font-size: 12.5px;
+      line-height: 1.5;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+    }
+
+    .weakness-item {
+      background: var(--accent-rose-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-rose-border);
+    }
+
+    .opportunity-item {
+      background: var(--accent-green-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-green-border);
+    }
+
+    /* Channels Grid */
+    .channel-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .channel-card {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .channel-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .channel-name-tag {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-active {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    .status-dormant {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber-text);
+      border: 1px solid var(--accent-amber-border);
+    }
+
+    .status-inactive {
+      background: var(--bg-subtle);
+      color: var(--text-tertiary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .newsletter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 12.5px;
+    }
+
+    /* Posting Frequency Chart Box */
+    .chart-container {
+      position: relative;
+      height: 200px;
+      width: 100%;
+      margin: 10px 0 14px;
+    }
+
+    .data-window-caption {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+    }
+
+    .companion-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Strongest Growth Channel Analysis */
+    .growth-meters-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .growth-meter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .meter-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .meter-name {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .meter-score {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 7px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .meter-teal { background: #0F766E; }
+    .meter-blue { background: #3B5F8A; }
+    .meter-amber { background: #B45309; }
+    .meter-rose { background: #B8433A; }
+
+    /* Outreach Strategy & Message Box */
+    .outreach-angle-tag {
+      display: inline-block;
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .message-draft-box {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      box-shadow: 0 1px 2px rgba(60, 50, 35, 0.04);
+    }
+
+    .draft-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-subtle);
+    }
+
+    .draft-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--text-tertiary);
+    }
+
+    .draft-content {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Jobs Section */
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .job-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .job-role {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .job-location {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Decision Makers Section */
+    .dm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dm-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .dm-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dm-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .dm-name {
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text-primary);
+    }
+
+    .dm-title {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .dm-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .dm-action-btn:hover {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 680px) {
+      .overview-grid, .scores-grid, .split-grid, .firmographics-card {
+        grid-template-columns: 1fr;
+      }
+      .channel-status-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Status Bar -->
+    <div class="top-bar">
+      <span class="system-label">Isis // Intelligence Brief</span>
+      <span class="audit-date">Analyzed: September 27, 2026 | Live Growth Intelligence & Acquisition Stack</span>
+    </div>
+
+    <!-- 1. Header (Company Name, Website, Tier Badge + Dynamic Rationale) -->
+    <header class="header-section">
+      <div class="company-title-row">
+        <div>
+          <h1 class="company-name">Gate Sentry</h1>
+        </div>
+        <div class="tier-wrapper">
+          <div class="badge-tier">
+            <span class="badge-dot"></span>
+            Tier 2 (Medium Potential)
+          </div>
+          <span class="tier-rationale">Tier 2: Solid market foundation (55/100) with key technical conversion opportunities.</span>
+        </div>
+      </div>
+      <a href="https://gatesentry.com" target="_blank" class="website-link">
+        gatesentry.com
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </header>
+
+    <!-- 2. What The Company Does (Core Value Proposition) -->
+    <div class="what-they-do-card">
+      <span class="what-they-do-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        What They Do & Core Value Proposition
+      </span>
+      <p class="what-they-do-text">
+        Modernize access for residential &amp; commercial properties. Cloud-managed &amp; hardware-free, for enhanced security &amp; efficiency.
+      </p>
+    </div>
+
+    <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
+    <div class="overview-grid">
+      <div class="basic-summary-box">
+        <span class="overview-label">Commercial Market Posture</span>
+        <p class="basic-summary-text">
+          Established platform with sustained market reach. Demonstrates solid brand authority but reveals technical conversion leaks across digital paid retargeting and search indexing.
+        </p>
+      </div>
+
+      <div class="sector-box">
+        <span class="overview-label">Sector Context</span>
+        <div>
+          <span class="sector-tag">Software Development &amp; B2B SaaS</span>
+        </div>
+        <p class="sector-text">
+          Competitive digital software landscape with demanding buyer evaluation cycles. Clear differentiation and conversion tracking are vital for margin expansion.
+        </p>
+      </div>
+    </div>
+    
+    <!-- 2c. Tech Stack & Page Speed -->
+    <div class="overview-grid">
+      <div class="sector-box">
+        <span class="overview-label">Detected Tech Stack</span>
+        <div style="margin-top: 8px;">
+          <span class="sector-tag" style="margin-right: 4px; margin-bottom: 4px; display: inline-block;">WordPress</span> <span class="sector-tag" style="margin-right: 4px; margin-bottom: 4px; display: inline-block;">HubSpot</span>
+        </div>
+      </div>
+      <div class="basic-summary-box" style="align-items: center; justify-content: center; text-align: center;">
+        <span class="overview-label">Mobile PageSpeed Score</span>
+        <div class="score-val-row" style="margin-top: 5px;">
+          <span class="score-number">—</span>
+          <span class="score-scale">/ 100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2d. Firmographics Stats Row -->
+    <div class="firmographics-card">
+      <div class="firmographic-stat">
+        <span class="stat-label">Employee Count</span>
+        <span class="stat-value">8 employees (LinkedIn Verified)</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Funding & Stage</span>
+        <span class="stat-value">Revenue: $1M – $2.5M USD</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Founded Year</span>
+        <span class="stat-value">United States</span>
+      </div>
+    </div>
+
+    <!-- 3. Score Overview -->
+    <div class="scores-grid">
+      <div class="score-card">
+        <div class="score-label">Potential Score</div>
+        <div class="score-val-row">
+          <span class="score-number">55</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-teal">Moderate Viability</span>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Opportunity Rating</div>
+        <div class="score-val-row">
+          <span class="score-number">20</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-green">Targeted Wedge</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Executive Briefing -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Executive Briefing</span>
+      </div>
+      <p class="executive-text">Gate Sentry demonstrates significant brand momentum and inbound market interest. However, key top-of-funnel inefficiencies—specifically in conversion retargeting and structured entity indexing—limit full monetization of existing site visitors. Targeting decision-makers with a concise technical audit delivers an immediate value-add conversation starter.</p>
+    </div>
+
+    <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Brand & Cross-Channel Messaging Coherence</span>
+      </div>
+      <div class="coherence-box">
+        <div class="coherence-header-row">
+          <span class="coherence-status-pill">Strong Cross-Channel Alignment</span>
+          <span class="coherence-score-badge">Coherence Score: 8.8 / 10</span>
+        </div>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">High Consistency</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Active Multi-Channel Presence</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">Unified ICP &amp; Voice</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">Gate Sentry maintains a recognizable core value proposition on its primary domain. However, secondary channel engagement is uneven, leaving opportunities to reinforce their core problem-solving narrative across long-form video and educational search.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Minor narrative drift between high-level brand slogans and technical product documentation.</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Repurpose high-performing website value propositions into regular LinkedIn thought leadership and YouTube product walkthroughs to create an airtight multi-channel narrative.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Weaknesses & Opportunities (2-Column Layout) -->
+    <div class="split-grid">
+      <div class="split-panel">
+        <div class="panel-title title-weakness">
+          <span>Identified Weaknesses & Growth Impact</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item weakness-item"><strong>No Schema.org / JSON-LD structured data found</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Invisibility in modern AI search engines (ChatGPT, Perplexity, Claude), preventing AI answer bots from recommending your product.</div></li><li class="panel-item weakness-item"><strong>No Meta Pixel detected</strong><div style="margin-top: 3px; color: var(--text-secondary); font-size: 12px; line-height: 1.45;">Impact: Non-converting website visitors bounce unmonetized; company cannot run high-ROI paid social retargeting on Instagram/Facebook to recapture warm leads.</div></li>
+        </ul>
+      </div>
+
+      <div class="split-panel">
+        <div class="panel-title title-opportunity">
+          <span>Strategic Pitch Angles</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item opportunity-item">🎯 Paid Social Retargeting: 'I ran a quick pixel check and noticed you don't have a Meta pixel active on your site. You are missing out on retargeting visitors who leave without converting.'</li><li class="panel-item opportunity-item">🔍 SEO & AI Discovery Fix: 'When running a technical check on your site, I noticed opportunities to improve your OpenGraph preview tags and add structured schema data so AI engines (ChatGPT/Perplexity) accurately index your products.'</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. Social Media Activity Status & Posting Frequency -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Digital & Channel Footprint (Activity Status)</span>
+      </div>
+
+      <!-- Channel Grid (3x2) -->
+      <div class="channel-status-grid">
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">LinkedIn</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.linkedin.com/company/gatesentry" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">X (Twitter)</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://x.com/GateSentry" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">YouTube</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.youtube.com/@Gate_Sentry" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Instagram</span>
+            <span class="status-pill status-dormant">Dormant</span>
+          </div>
+          <div><a href="https://www.instagram.com/gatesentry" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">TikTok</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.tiktok.com/@gatesentry" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Facebook</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.facebook.com/gatesentrysoftware" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+      </div>
+
+      <!-- Newsletter Status Row -->
+      <div class="newsletter-row"><span style="color: var(--text-secondary);">Email Newsletter & Lead Capture:</span><span class="status-pill status-inactive">Not Detected</span></div>
+
+      <!-- Posting Frequency Chart -->
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
+          <span class="data-window-caption">Estimated from public posts, last 90 days</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="postingFrequencyChart"></canvas>
+        </div>
+        <p class="companion-text">
+          <strong>Channel Activity Interpretation:</strong> LinkedIn and X are the primary active touchpoints. Inactive visual and video channels (YouTube, TikTok) represent untapped customer acquisition territory.</p>
+      </div>
+    </div>
+
+    <!-- 7. Strongest Growth Channel Analysis -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Growth Channel Strength Analysis</span>
+      </div>
+
+      <div class="growth-meters-list">
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Organic B2B Social &amp; Thought Leadership</span>
+            <span class="meter-score">75 / 100 — Strong Existing Channel</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-teal" style="width: 75%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Inbound Content &amp; Educational Resources</span>
+            <span class="meter-score">60 / 100 — Moderate Foundation</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-blue" style="width: 60%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Technical SEO &amp; AI Search Indexing (GEO)</span>
+            <span class="meter-score">38 / 100 — Underdeveloped Lever</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-amber" style="width: 38%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Paid Retargeting &amp; Audience Remarketing</span>
+            <span class="meter-score">15 / 100 — Severe Leak / Untapped</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-rose" style="width: 15%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="companion-text">
+        <strong>Strategic Pitch Rationale:</strong> While organic brand authority is high, plugging conversion leaks in paid retargeting and AI schema yields the highest short-term ROI for outreach.</p>
+    </div>
+
+    
+    <!-- 7.5 Post-Level Content Teardown & Optimization (AI Audit) -->
+    <div class="card" id="postLevelAnalysisCard" style="margin-bottom:20px;">
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <span class="section-title">Post-by-Post Content Teardown & Optimization</span>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Granular post critiques, live visual previews, and purpose-matched rewrites grounded in the Isis Knowledge Base.</p>
+        </div>
+        <span class="status-pill status-active" style="font-size:10.5px; background:rgba(15,118,110,0.12); color:#0F766E;">8 Posts Audited</span>
+      </div>
+      <div style="margin-top:16px;">
+        
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DbDtJriEYsH/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.frns1-1.fna.fbcdn.net/v/t51.82787-15/752740913_18007841123929443_3911913988602915449_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=109&amp;_nc_map=urlgen_bucketless&amp;ig_cache_key=Mzk0NjE5NjI3NTgxNzQ1MDI0Nw%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTc1Ni5zZHIucmVndWxhcl9waG90by5DMyJ9&amp;_nc_ohc=UkOAEABkd1gQ7kNvwEkOmku&amp;_nc_oc=AdoOJDvASnruEhfquL3lHjXiQ7OfMOjTQaZoY_ItLWdsIssRk9Xs65VxfKrtm1SPoAJ73hYJXCaFj-yLoH-BoLmu&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=instagram.frns1-1.fna&amp;_nc_gid=VWv1VsCp7cxQG2O7xI5Dmg&amp;_nc_ss=7a22e&amp;oh=00_AQLVUWIS_5lZLz869pmXa5cqs4fUBxi_dLpBpCnYybWr6w&amp;oe=6ABF08CA" 
+               alt="INSTAGRAM Image Post: A few weeks ago, our sales team leader, Kale McClarty, had the opportunity ..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            A few weeks ago, our sales team leader, Kale McClarty, had the opportunity to visit the team at @lifetimehoamanagement <br><br>It was a great chance to exchange ideas, discuss the evolving needs of gated communities, and share how Gate Sentry is helping properties modernize access control with a software-first approach. From streamlining visitor management to improving the experience for residents and security staff, we&#x27;re focused on making gate operations simpler and more efficient.<br><br>We always value the opportunity to connect with industry leaders and hear firsthand about the challenges they&#x27;re solving every day. Those conversations help guide the future of our platform and ensure we&#x27;re building solutions that make a real impact.<br><br>A special thank you to Stefan Neasman and the entire Lifetime HOA Management team for the warm welcome. We appreciate your time and look forward to staying connected.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          While this relationship-focused post is warm, it relies heavily on dry, passive corporate language (&#x27;had the opportunity to visit&#x27;, &#x27;exchange ideas&#x27;) that fails to hook the user in the critical first 1.7 seconds. It misses a chance to frame the partnership around shared empathy for the daily operational struggles of HOA managers <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[This Is Marketing Summary - Seth Godin]</span>. Additionally, it lacks a clear, native call-to-action that encourages community engagement or saves <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the Instagram Algorithm Works in 2026 (Official)]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_1')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_1" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+What happens when software-first access control meets boots-on-the-ground community management? Our sales leader, Kale McClarty, spent the day with Stefan Neasman and the team at @lifetimehoamanagement to find out. We discussed how gated communities are moving away from legacy hardware to streamline visitor check-ins for residents and guards alike. Thank you to the Lifetime HOA team for the hospitality—we&#x27;re excited to keep building the future of property access together.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">A few weeks ago, our sales team leader, Kale McClarty, had the opportunity to visit...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">What happens when software-first access control meets boots-on-the-ground community management? Our sales leader, Kale McClarty, spent the day...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces passive corporate announcement language with an engaging, curiosity-driven hook to capture attention in the first 3 seconds. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026 (Official)]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">From streamlining visitor management to improving the experience for residents and security staff...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">We discussed how gated communities are moving away from legacy hardware to streamline visitor check-ins...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Frames the discussion around the specific shift from legacy alternatives to modern software, establishing clear positioning. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Obviously Awesome by April Dunford]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Video</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DZnXyAvBfqb/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.fltn4-1.fna.fbcdn.net/v/t51.82787-15/724764384_18002699951929443_491418095792999663_n.jpg?stp=dst-jpg_e15_tt6&amp;_nc_cat=102&amp;_nc_map=urlgen_bucketless&amp;ig_cache_key=MzkyMDIwNjU5MjQ4MTgxOTI5MQ%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkNMSVBTLnhwaWRzLjEyOTguc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuQzMifQ%3D%3D&amp;_nc_ohc=pRotMol_v8EQ7kNvwGWZNaa&amp;_nc_oc=Adrhmz-6QI9_0SisOSkHQlX4B0EieLWYza-Hc9jcyJZjkHzjL7MgxX6S1DlBQLmQHf0&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=instagram.fltn4-1.fna&amp;_nc_gid=q1E8Vei7X8abT0BY0zQoFQ&amp;_nc_ss=7a22e&amp;oh=00_AQIgjQudW3S34Kn_-2oW-ElYJYBl2SGNDuTAoieCC8QK7A&amp;oe=6ABF3342" 
+               alt="INSTAGRAM Video Post: Most visitor management systems were built for a different era. They rely o..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Most visitor management systems were built for a different era.<br><br>They rely on guardhouse computers, proprietary hardware, and workflows that create friction for residents, guards, and administrators.<br><br>Gate Sentry takes a modern approach.<br><br>#GateSentry #VisitorManagement #HOA #PropertyManagement #CommunityManagement #AccessControl #GatedCommunity #MultifamilyHousing #PropertyTechnology #PropTech
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The post identifies a strong competitive alternative (legacy guardhouse computers) but ends on a weak, anti-climactic statement (&#x27;Gate Sentry takes a modern approach&#x27;) without explaining the technical mechanism or value <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Obviously Awesome by April Dunford]</span>. It also relies on a block of low-value hashtags instead of integrating rich keywords into the caption to drive search discoverability <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the Instagram Algorithm Works in 2026 (Official)]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_2')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_2" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Most visitor management systems are stuck in 2010. They rely on bulky guardhouse computers, proprietary hardware, and manual workflows that frustrate residents and slow down guards. Gate Sentry replaces legacy hardware with a software-first platform. No proprietary servers. No complex guard training. Just fast, secure, and modern access control that works on any device. Save this post to audit your current gate operations.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Most visitor management systems were built for a different era.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Most visitor management systems are stuck in 2010.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Creates a more specific, unexpected, and high-arousal hook that breaks the pattern of standard corporate copy. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Gate Sentry takes a modern approach.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Gate Sentry replaces legacy hardware with a software-first platform. No proprietary servers. No complex guard training.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces vague corporate fluff with the exact technical mechanism and unique attributes of the product. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Core Playbook: marketing_playbook.md]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">#GateSentry #VisitorManagement #HOA...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Save this post to audit your current gate operations.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Swaps low-value hashtag blocks for a high-value CTA optimized for saves, which is the most powerful growth signal on Instagram. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026 (Official)]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Video</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DZYOAbFBR2L/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.fktw1-1.fna.fbcdn.net/v/t51.82787-15/720846534_18001905854929443_599198035140424974_n.jpg?stp=dst-jpg_e15_tt6&amp;_nc_cat=108&amp;_nc_map=urlgen_bucketless&amp;ig_cache_key=MzkxNTk0MTQ3NzcyNTA1MjI5OTE4MDAxOTA1ODQ4OTI5NDQz.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkNMSVBTLnhwaWRzLjEyNjYuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuQzMifQ%3D%3D&amp;_nc_ohc=0rl3bNNEbQsQ7kNvwFB-UP4&amp;_nc_oc=AdpWatkSr19h4bK3LSncBLAyT67qQxw7NAkzDkGbC2sl4ccVBoAEX42uGbnEjilAJMc&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=instagram.fktw1-1.fna&amp;_nc_gid=F1BB66gFz-bFHAOyfan29A&amp;_nc_ss=7a22e&amp;oh=00_AQIglrza11Wp5UW-iNg1GNNKk-MwnFY5vCXWXm3IES3V8A&amp;oe=6ABF05B5" 
+               alt="INSTAGRAM Video Post: Paper logs. Phone calls. Manual visitor check-ins. Industrial facilities de..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Paper logs. Phone calls. Manual visitor check-ins.<br><br>Industrial facilities deserve better.<br><br>See how modern gatehouse security is helping manufacturers, warehouses, and logistics operations streamline visitor management and improve visibility.<br><br>#Manufacturing #IndustrialSecurity #WarehouseManagement #Logistics #SupplyChain #VisitorManagement #AccessControl #GatehouseSecurity #FacilityManagement #WarehouseSecurity #IndustrialOperations #SecurityTechnology #ManufacturingTechnology #OperationsManagement #GateSentry
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The post identifies a highly painful problem (paper logs in industrial facilities) but fails to explain the technical mechanism of how Gate Sentry solves it. The call to action is passive (&#x27;See how...&#x27;) and misses the opportunity to drive &#x27;sends per reach&#x27; by making the content highly shareable for operations managers <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the Instagram Algorithm Works in 2026 (Official)]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_3')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_3" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Paper logs. Missed phone calls. Manual visitor check-ins. If your industrial facility is still managing gatehouse security like it&#x27;s 1995, you&#x27;re losing operational efficiency. Modern logistics and manufacturing operations require real-time visibility. Gate Sentry digitizes the gatehouse, allowing security teams to verify carriers, contractors, and visitors in seconds—without the paper trail. Share this with your operations team to start streamlining your throughput.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Industrial facilities deserve better.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">If your industrial facility is still managing gatehouse security like it&#x27;s 1995, you&#x27;re losing operational efficiency.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Connects the problem directly to a painful operational outcome rather than using a vague, low-impact slogan. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Core Playbook: marketing_playbook.md]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">See how modern gatehouse security is helping...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Gate Sentry digitizes the gatehouse, allowing security teams to verify carriers, contractors, and visitors in seconds...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Explains the specific technical mechanism and the immediate benefit to the user. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Obviously Awesome by April Dunford]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">#Manufacturing #IndustrialSecurity...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Share this with your operations team to start streamlining your throughput.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Optimizes for sends/shares, which carry 3-5x more weight than likes for unconnected reach on Instagram. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026 (Official)]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Video</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DZdTdVth-0y/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://scontent-lga3-1.cdninstagram.com/v/t51.82787-15/723137354_18002179877929443_5696887039535148317_n.jpg?stp=dst-jpg_e15_tt6&amp;_nc_cat=103&amp;ig_cache_key=MzkxNzM3MjgyOTk0MzE5Njk3OA%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkNMSVBTLnhwaWRzLjEzMzQuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuQzMifQ%3D%3D&amp;_nc_ohc=z4IOgLp34VgQ7kNvwH7-ARh&amp;_nc_oc=AdpHGKXs3xZ7H8BHjAn_YleoYkYm4DRfeelS9UzITPBDdiSS4CqwDzoje63hgveH3lVRU0nCSvaDkNFhILmKbmSo&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=scontent-lga3-1.cdninstagram.com&amp;_nc_gid=goFOQjDI_GYBomuqZaem2g&amp;_nc_ss=7a22e&amp;oh=00_AQKx0_htoLgXpBqR7BXkwNZYaCGYPzd-Oo9VKekNEHXFHg&amp;oe=6ABF0DC1" 
+               alt="INSTAGRAM Video Post: Why are communities still spending thousands on keypads and call boxes? Wit..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            Why are communities still spending thousands on keypads and call boxes?<br><br>With VirtualKeypad, visitors simply scan a QR code and enter their access code from their own phone. No app. No hardware. No complicated check-in process.<br><br>Access control doesn&#x27;t have to be expensive.<br><br>#hoa #PropertyManagement #AccessControl #VisitorManagement #GatedCommunity #MultifamilyHousing #PropTech #GateSentry
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          This post has a strong hook addressing a financial pain point. However, it misses a clear, low-friction call to action and relies on generic hashtags instead of semantic keywords. It also fails to leverage the &#x27;slippery slope&#x27; technique to keep users reading and pausing (dwell time) <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[The Adweek Copywriting Handbook]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_4')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_4" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Why are communities still spending thousands on physical keypads and call boxes that constantly break down? With VirtualKeypad, visitors simply scan a secure QR code at the gate and enter their access code directly from their own mobile browser. No app download required. No expensive hardware maintenance. Access control should protect your budget, not drain it. Save this post for your next HOA board meeting.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">With VirtualKeypad, visitors simply scan a QR code and enter their access code from their own phone. No app. No hardware.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">With VirtualKeypad, visitors simply scan a secure QR code at the gate and enter their access code directly from their own mobile browser. No app download required. No expensive hardware maintenance.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Clarifies the exact technical mechanism and addresses the hidden objection of app-fatigue. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[The Adweek Copywriting Handbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Access control doesn&#x27;t have to be expensive.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Access control should protect your budget, not drain it. Save this post for your next HOA board meeting.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces a flat statement with a strong, emotional value-based promise and a save-focused CTA. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[This Is Marketing Summary - Seth Godin]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Video</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DaBUhCkhPHY/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.fpoz6-1.fna.fbcdn.net/v/t51.82787-15/730244248_18004119803929443_7696937012913144507_n.jpg?stp=dst-jpg_e15_tt6&amp;_nc_cat=110&amp;_nc_map=urlgen_bucketless&amp;ig_cache_key=MzkyNzUxMDU4MTQ3NjkxMzYyNDE4MDA0MTE5ODAwOTI5NDQz.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkNMSVBTLnhwaWRzLjEzMTAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuQzMifQ%3D%3D&amp;_nc_ohc=cYMORuwHnc8Q7kNvwEoVIIZ&amp;_nc_oc=AdoLTbDUHY9SwSera9fwbcco4sOYCMopW1r-DChu0NsK2uqjGy4z8YBGTWTKMEfxybo&amp;_nc_ad=z-m&amp;_nc_cid=1249&amp;_nc_zt=23&amp;_nc_ht=instagram.fpoz6-1.fna&amp;_nc_gid=FxGX5hR7N6UnanRM1F2SJQ&amp;_nc_ss=7a22e&amp;oh=00_AQLjdoZ4DsMR9q_2YmSxhlnJBKqG9YpSYp5b9j_0fKYzBQ&amp;oe=6ABF2DA1" 
+               alt="INSTAGRAM Video Post: The front gate is one of the most overlooked bottlenecks at manufacturing a..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            The front gate is one of the most overlooked bottlenecks at manufacturing and industrial facilities.<br><br>Every contractor, vendor, truck driver, delivery driver, and visitor enters through the same gate. When check-in relies on paper logs and manual processes, delays add up quickly.<br><br>Modern visitor management helps security teams reduce check-in times, improve gate throughput, and keep operations moving.<br><br>Learn more at the link in our bio.<br><br>#Manufacturing #Industrial #Warehouse #Logistics #SupplyChain #Operations #VisitorManagement #AccessControl #IndustrialSecurity #WarehouseManagement
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The post identifies a critical operational bottleneck but ends with &#x27;Learn more at the link in our bio,&#x27; which Instagram&#x27;s 2026 algorithm actively deprioritizes because it attempts to steer users off-platform <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the Instagram Algorithm Works in 2026 (Official)]</span>. It also lacks a specific, save-worthy framework for operations managers to audit their gate throughput <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Obviously Awesome by April Dunford]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_5')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_5" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+The front gate is the ultimate bottleneck for industrial facilities. When contractors, vendors, and logistics drivers are forced to wait on manual paper logs, check-in delays ripple through your entire supply chain. Modernizing your gatehouse security reduces check-in times and keeps operations moving. Here is how a software-first approach improves gate throughput: 1. Digital pre-registration for scheduled vendors. 2. Instant guard verification on mobile tablets. 3. Real-time arrival notifications for facility hosts. Save this checklist to audit your gate operations.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Learn more at the link in our bio.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Here is how a software-first approach improves gate throughput: 1. Digital pre-registration... 2. Instant guard verification... 3. Real-time arrival notifications...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Eliminates the off-platform link reference which is penalized by the algorithm, replacing it with high-value, native educational content. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the Instagram Algorithm Works in 2026 (Official)]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Every contractor, vendor, truck driver...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">When contractors, vendors, and logistics drivers are forced to wait on manual paper logs, check-in delays ripple through your entire supply chain.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Paints a vivid picture of the operational pain point and its business impact. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Text</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/gatesentry_hiring-activity-7505588794688032768-Xj6J" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; border-radius:6px; border:1px dashed var(--border-medium); background:var(--bg-app); display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-secondary); font-size:11px; text-align:center; padding:8px;">
+          <span style="font-size:18px;">📝</span>
+          <span style="font-weight:600; margin-top:4px;">Text / Status Post</span>
+          <span style="font-size:9.5px; opacity:0.7; margin-top:2px;">(No media attached)</span>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            We&#x27;re #hiring a new Business Development Representative in Dallas-Fort Worth Metroplex. Apply today or share this post with your network.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          This is an extremely low-effort, templated hiring post. Under LinkedIn&#x27;s 360Brew algorithm, this reads as low-quality, automated content and will be heavily throttled <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>. It fails to sell the company culture, the mission, or the specific opportunity, resulting in zero dwell time or organic saves <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[This Is Marketing Summary - Seth Godin]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_6')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_6" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+We are expanding our team in Dallas-Fort Worth. Gate Sentry is on a mission to replace legacy, hardware-heavy access control with a modern, software-first platform. We are looking for a Business Development Representative who wants to help HOAs, industrial facilities, and property managers solve real operational headaches. If you are a relationship-builder who thrives in a fast-growing B2B environment, we would love to connect. Read more about our mission and apply below.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">We&#x27;re #hiring a new Business Development Representative in Dallas-Fort Worth Metroplex. Apply today or share this post with your network.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">We are expanding our team in Dallas-Fort Worth. Gate Sentry is on a mission to replace legacy, hardware-heavy access control with a modern, software-first platform...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces low-effort, automated-looking text with an authentic, mission-driven narrative that builds brand authority and increases dwell time. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Apply today or share this post...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">We are looking for a Business Development Representative who wants to help HOAs, industrial facilities, and property managers solve real operational headaches...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Clearly defines the ICP and the specific problems the role will help solve, attracting higher-quality candidates. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Core Playbook: marketing_playbook.md]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Text</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/gatesentry_hiring-activity-7483122302159732736-xysQ" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; border-radius:6px; border:1px dashed var(--border-medium); background:var(--bg-app); display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-secondary); font-size:11px; text-align:center; padding:8px;">
+          <span style="font-size:18px;">📝</span>
+          <span style="font-weight:600; margin-top:4px;">Text / Status Post</span>
+          <span style="font-size:9.5px; opacity:0.7; margin-top:2px;">(No media attached)</span>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            We&#x27;re #hiring a new Business Development Representative in Dallas-Fort Worth Metroplex. Apply today or share this post with your network.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          Duplicate posting of low-effort content is a major red flag for LinkedIn&#x27;s 360Brew algorithm, which filters out repetitive, automated-looking updates <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn algorithm works in 2026]</span>. It completely lacks an authentic voice or a hook to capture the attention of high-performing sales talent in the DFW area <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Made To Stick]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_7')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_7" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+What is the biggest frustration in B2B sales? Selling a product that customers don&#x27;t actually need. At Gate Sentry, we solve a highly visible, daily headache: legacy, broken gate hardware at residential and industrial properties. We are hiring a Business Development Representative in the Dallas-Fort Worth Metroplex to help us introduce our software-first access control platform to properties that are ready to modernize. If you are ready to sell a solution that property managers actually love, let&#x27;s talk. Details in the comments.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">We&#x27;re #hiring a new Business Development Representative...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">What is the biggest frustration in B2B sales? Selling a product that customers don&#x27;t actually need...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Uses an unexpected, high-empathy hook to break the pattern of duplicate hiring posts and capture attention. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">Apply today or share this post...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">We are hiring a Business Development Representative... to help us introduce our software-first access control platform... Details in the comments.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Moves the application link to the comments to avoid the body-link penalty while maintaining a clean, high-dwell-time post. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn algorithm works in 2026]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#0A66C2; color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">LINKEDIN</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.linkedin.com/posts/gatesentry_a-few-weeks-ago-our-sales-team-leader-kale-activity-7485335186465894400--TTm" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://media.licdn.com/dms/image/v2/D5622AQEI-S8YakTxuA/feedshare-image-high-res/B56Z.FArz8GQAU-/0/1784642977811?e=1792022400&amp;v=beta&amp;t=k8-idb4JjJUfsRYWb9NonogHBjiOoRO5CefOALWxjwo" 
+               alt="LINKEDIN Image Post: A few weeks ago, our sales team leader, Kale McClarty, had the opportunity ..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            A few weeks ago, our sales team leader, Kale McClarty, had the opportunity to visit the team at Lifetime HOA Management.<br><br>It was a great chance to exchange ideas, discuss the evolving needs of gated communities, and share how Gate Sentry is helping properties modernize access control with a software-first approach. From streamlining visitor management to improving the experience for residents and security staff, we&#x27;re focused on making gate operations simpler and more efficient.<br><br>We always value the opportunity to connect with industry leaders and hear firsthand about the challenges they&#x27;re solving every day. Those conversations help guide the future of our platform and ensure we&#x27;re building solutions that make a real impact.<br><br>A special thank you to Stefan Neasman and the entire Lifetime HOA Management team for the warm welcome. We appreciate your time and look forward to staying connected.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          While relationship-building is great for LinkedIn, this post reads like a dry corporate press release. Under the 360Brew algorithm, posts must demonstrate deep domain expertise and invite meaningful professional conversation to earn reach <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>. It lacks a clear, save-worthy takeaway or framework that other HOA managers could implement <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[This Is Marketing Summary - Seth Godin]</span>.
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_8')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_8" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+Boots-on-the-ground insights always beat boardroom assumptions. Our sales leader, Kale McClarty, recently visited Stefan Neasman and the team at Lifetime HOA Management. We discussed a major shift happening in gated communities: the transition from legacy, hardware-heavy gate systems to flexible, software-first access control. By streamlining visitor management, properties aren&#x27;t just improving security—they&#x27;re removing daily friction for residents and guards. A huge thank you to the Lifetime HOA team for sharing their operational challenges and helping us shape the future of our platform.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">A few weeks ago, our sales team leader, Kale McClarty, had the opportunity to visit...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">Boots-on-the-ground insights always beat boardroom assumptions. Our sales leader, Kale McClarty, recently visited...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces dry corporate announcement language with an authority-building, professional insight hook. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) - Expandi]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">From streamlining visitor management to improving the experience...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">By streamlining visitor management, properties aren&#x27;t just improving security—they&#x27;re removing daily friction for residents and guards.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Focuses on the emotional and operational outcomes (removing friction) rather than generic features. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[This Is Marketing Summary - Seth Godin]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- 8. Outreach Angle & Message Starter -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Recommended Outreach Strategy</span>
+        <span class="status-pill status-active" style="font-size: 10px;">Primary Wedge</span>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+          <span class="outreach-angle-tag">Paid Retargeting &amp; Full-Funnel Tracking Setup</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
+          <strong>Why this angle:</strong> Gate Sentry generates organic site traffic but currently lacks Meta retargeting pixels, causing non-converting visitors to bounce without re-engagement.</p>
+      </div>
+
+      <!-- Copyable Message Box -->
+      <div class="message-draft-box" style="border:1px solid var(--border-medium); border-radius:8px; background:var(--bg-surface); padding:16px;">
+        <div class="draft-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+          <div>
+            <span class="draft-label" style="font-size:12px; font-weight:700; color:var(--text-primary);">Draft Cold Outreach Message // Personalized for Gate Sentry Leadership</span>
+            <span style="display:inline-block; margin-left:8px; font-size:10.5px; color:#D97706; background:rgba(217,119,6,0.1); padding:1px 6px; border-radius:4px; font-weight:600;">Editable Scratchpad (Click to Edit)</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="copy-btn" onclick="resetOutreachMessage()" style="background:transparent; border:1px solid var(--border-medium); color:var(--text-secondary); font-size:11.5px; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:500;">
+              🔄 Reset to Original
+            </button>
+            <button class="copy-btn" id="mainCopyBtn" onclick="copyEditableMessage()" style="background:#0F766E; color:#fff; border:none; font-size:11.5px; padding:4px 10px; border-radius:4px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copyBtnText">Copy Outreach</span>
+            </button>
+          </div>
+        </div>
+        
+        <div id="outreachMessageText" 
+             contenteditable="true" 
+             data-original="Hi Gate Sentry Leadership,&#10;&#10;I&#x27;ve been following Gate Sentry&#x27;s work around &#x27;Modernize access for residential &amp; commercial properties. Cloud-managed &amp; hardware-free, for enhanced security &amp; efficiency.&#x27; and wanted to reach out directly.&#10;&#10;When running a quick growth check on your web stack, I noticed your site is currently missing Meta retargeting pixels, meaning high-intent visitors are dropping off uncaptured.&#10;&#10;I drafted a 5-point teardown showing how to plug this traffic leak and recover lost pipeline. Would you like me to send it across?&#10;&#10;Best,&#10;[Your Name]"
+             style="min-height:160px; font-size:13.5px; line-height:1.65; color:var(--text-primary); font-family:inherit; white-space:pre-wrap; outline:none; padding:10px; border-radius:6px; border:1px dashed var(--border-medium); transition:border-color 0.2s;"
+             onfocus="this.style.borderColor='#0F766E'; this.style.background='rgba(15,118,110,0.02)';"
+             onblur="this.style.borderColor='var(--border-medium)'; this.style.background='transparent';">Hi Gate Sentry Leadership,
+
+I&#x27;ve been following Gate Sentry&#x27;s work around &#x27;Modernize access for residential &amp; commercial properties. Cloud-managed &amp; hardware-free, for enhanced security &amp; efficiency.&#x27; and wanted to reach out directly.
+
+When running a quick growth check on your web stack, I noticed your site is currently missing Meta retargeting pixels, meaning high-intent visitors are dropping off uncaptured.
+
+I drafted a 5-point teardown showing how to plug this traffic leak and recover lost pipeline. Would you like me to send it across?
+
+Best,
+[Your Name]</div>
+
+        <div style="font-size:11px; color:var(--text-secondary); margin-top:8px; display:flex; align-items:center; gap:4px;">
+          <span>ℹ️ Note: Edits made in this scratchpad are temporary and not saved on page refresh.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Marketing Jobs Available -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Marketing Hiring Activity (0 Open Roles — Fractional Target)</span>
+      </div>
+      <div class="jobs-list">
+
+        <div class="job-item">
+          <span class="job-role">No active in-house marketing listings found</span>
+          <span class="job-location">Fractional Outreach Candidate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Target Decision Makers -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Target Decision Makers (1 Available)</span>
+      </div>
+      <div class="dm-list">
+
+        <div class="dm-card" style="border: 1px dashed var(--border-medium);">
+          <div class="dm-info">
+            <div class="dm-avatar" style="background: rgba(15, 118, 110, 0.10); color: #0F766E;">🔍</div>
+            <div>
+              <div class="dm-name">Find Gate Sentry Marketing Decision Makers</div>
+              <div class="dm-title">Live LinkedIn Sales Navigator & People Search Query</div>
+            </div>
+          </div>
+          <a href="https://www.linkedin.com/search/results/people/?keywords=Gate%20Sentry%20Head%20of%20Marketing%20OR%20VP%20Marketing%20OR%20Founder" target="_blank" class="dm-action-btn" style="background: #0F766E; color: #FFFFFF; border-color: #0F766E;">
+            <span>Search Decision Makers on LinkedIn ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart.js & Clipboard Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const ctx = document.getElementById('postingFrequencyChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
+          datasets: [{
+            label: 'Estimated Posts / Week',
+            data: [4.0, 2.5, 0.2, 0.0, 0.0, 0.0],
+            backgroundColor: ["#3B5F8A", "#5C5648", "#B45309", "#B45309", "#A85A94", "#A85A94"],
+            borderColor: [
+              'rgba(59, 95, 138, 0.3)',
+              'rgba(92, 86, 72, 0.3)',
+              'rgba(184, 72, 63, 0.3)',
+              'rgba(168, 90, 148, 0.3)',
+              'rgba(60, 50, 35, 0.12)',
+              'rgba(60, 50, 35, 0.12)'
+            ],
+            borderWidth: 1,
+            borderRadius: 4,
+            borderSkipped: false,
+            barThickness: 26
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#2A2420',
+              titleColor: '#FBF7F0',
+              bodyColor: '#EDE3D3',
+              borderColor: 'rgba(60, 50, 35, 0.15)',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return context.parsed.y + ' posts / week';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#6B5F52',
+                font: { family: "'Inter', sans-serif", size: 11, weight: '500' }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 5,
+              grid: {
+                color: 'rgba(60, 50, 35, 0.08)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9C9082',
+                font: { family: "'JetBrains Mono', monospace", size: 10 },
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    });
+
+    function copyEditableMessage() {
+      const text = document.getElementById('outreachMessageText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copyBtnText');
+        const orig = btnText.innerText;
+        btnText.innerText = '✓ Copied!';
+        setTimeout(() => { btnText.innerText = orig; }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+
+    function resetOutreachMessage() {
+      const el = document.getElementById('outreachMessageText');
+      const original = el.getAttribute('data-original');
+      if (original) {
+        el.innerText = original;
+        const btnText = document.getElementById('copyBtnText');
+        btnText.innerText = 'Reset Done';
+        setTimeout(() => { btnText.innerText = 'Copy Outreach'; }, 1500);
+      }
+    }
+
+    function copySpecificText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Rewrite copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+
+</body>
+</html>
