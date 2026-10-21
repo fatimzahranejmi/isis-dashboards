@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isis Intelligence Brief — Camel Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      /* Base surfaces */
+      --bg-app: #F5EEE4;              /* soft almond beige base */
+      --bg-surface: #FBF7F0;          /* card background, slightly lighter */
+      --bg-surface-raised: #FFFFFF;   /* raised elements — pills, avatars */
+      --bg-subtle: #EDE3D3;           /* hover states, subtle fills */
+
+      /* Borders */
+      --border-subtle: rgba(60, 50, 35, 0.08);
+      --border-medium: rgba(60, 50, 35, 0.16);
+
+      /* Text */
+      --text-primary: #2A2420;        /* near-black warm charcoal, not pure black */
+      --text-secondary: #6B5F52;      /* warm grey-brown */
+      --text-tertiary: #9C9082;       /* muted taupe for labels/timestamps */
+
+      /* Tier badges */
+      --accent-tier1-text: #A8681A;
+      --accent-tier1-bg: rgba(214, 149, 56, 0.14);
+      --accent-tier1-border: rgba(214, 149, 56, 0.30);
+
+      --accent-tier2-text: #B08900;
+      --accent-tier2-bg: rgba(212, 168, 0, 0.12);
+
+      --accent-tier3-text: #8A8072;
+      --accent-tier3-bg: rgba(138, 128, 114, 0.12);
+
+      /* Potential Score — teal */
+      --accent-teal-text: #0F766E;
+      --accent-teal-bg: rgba(15, 118, 110, 0.10);
+      --accent-teal-border: rgba(15, 118, 110, 0.22);
+
+      /* Opportunity Rating / positive signals */
+      --accent-green-text: #15803D;
+      --accent-green-bg: rgba(21, 128, 61, 0.10);
+      --accent-green-border: rgba(21, 128, 61, 0.20);
+
+      /* Amber warnings */
+      --accent-amber-text: #B45309;
+      --accent-amber-bg: rgba(217, 119, 6, 0.12);
+      --accent-amber-border: rgba(217, 119, 6, 0.24);
+
+      /* Weaknesses / warnings */
+      --accent-rose-text: #B8433A;
+      --accent-rose-bg: rgba(184, 67, 58, 0.10);
+      --accent-rose-border: rgba(184, 67, 58, 0.20);
+
+      /* Per-channel colors for charts */
+      --channel-linkedin: #3B5F8A;
+      --channel-x: #5C5648;
+      --channel-youtube: #B8483F;
+      --channel-instagram: #A85A94;
+      --channel-tiktok: #2E8B84;
+      --channel-facebook: #4A6FA5;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --card-shadow: 0 1px 3px rgba(60, 50, 35, 0.05), 0 1px 2px rgba(60, 50, 35, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 36px 20px 60px;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    /* Top Bar with Isis Rebrand */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .system-label {
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .audit-date {
+      color: var(--text-secondary);
+    }
+
+    /* Header Section */
+    .header-section {
+      margin-bottom: 16px;
+    }
+
+    .company-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .company-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .tier-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .badge-tier {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: var(--accent-tier1-bg);
+      color: var(--accent-tier1-text);
+      border: 1px solid var(--accent-tier1-border);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .tier-rationale {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      text-align: right;
+      max-width: 340px;
+      line-height: 1.4;
+    }
+
+    .website-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .website-link:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    .website-link svg {
+      width: 13px;
+      height: 13px;
+      opacity: 0.8;
+    }
+
+    /* What They Do Hero Box */
+    .what-they-do-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-left: 4px solid #0F766E;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 16px 0 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .what-they-do-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .what-they-do-text {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    /* Basic Summary & Sector Context Grid */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .basic-summary-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .overview-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .basic-summary-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .sector-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .sector-tag {
+      display: inline-block;
+      background: rgba(60, 50, 35, 0.06);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .sector-text {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Firmographics Card */
+    .firmographics-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .firmographic-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Scores Grid */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .score-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .score-val-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .score-number {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .score-scale {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .score-badge-inline {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .score-badge-teal {
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+    }
+
+    .score-badge-green {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    /* Main Section Card */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    /* Brand Messaging Coherence Audit Box */
+    .coherence-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 4px;
+    }
+
+    .coherence-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .coherence-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      background: rgba(15, 118, 110, 0.10);
+      color: #0F766E;
+      border: 1px solid rgba(15, 118, 110, 0.25);
+    }
+
+    .coherence-status-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .coherence-pillar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .coherence-critique-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .coherence-friction-box {
+      background: rgba(184, 67, 58, 0.06);
+      border-left: 3px solid #B8433A;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-friction-title {
+      font-weight: 700;
+      color: #B8433A;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .coherence-advice-box {
+      background: rgba(15, 118, 110, 0.06);
+      border-left: 3px solid #0F766E;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .coherence-advice-title {
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Executive Briefing */
+    .executive-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.65;
+    }
+
+    /* Weaknesses & Opportunities 2-Column Split */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .split-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .panel-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .title-weakness {
+      color: var(--accent-rose-text);
+    }
+
+    .title-opportunity {
+      color: var(--accent-green-text);
+    }
+
+    .panel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-item {
+      font-size: 12.5px;
+      line-height: 1.5;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+    }
+
+    .weakness-item {
+      background: var(--accent-rose-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-rose-border);
+    }
+
+    .opportunity-item {
+      background: var(--accent-green-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-green-border);
+    }
+
+    /* Channels Grid */
+    .channel-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .channel-card {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .channel-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .channel-name-tag {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-active {
+      background: var(--accent-green-bg);
+      color: var(--accent-green-text);
+      border: 1px solid var(--accent-green-border);
+    }
+
+    .status-dormant {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber-text);
+      border: 1px solid var(--accent-amber-border);
+    }
+
+    .status-inactive {
+      background: var(--bg-subtle);
+      color: var(--text-tertiary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .newsletter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 12.5px;
+    }
+
+    /* Posting Frequency Chart Box */
+    .chart-container {
+      position: relative;
+      height: 200px;
+      width: 100%;
+      margin: 10px 0 14px;
+    }
+
+    .data-window-caption {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+    }
+
+    .companion-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Strongest Growth Channel Analysis */
+    .growth-meters-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .growth-meter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .meter-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .meter-name {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .meter-score {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 7px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .meter-teal { background: #0F766E; }
+    .meter-blue { background: #3B5F8A; }
+    .meter-amber { background: #B45309; }
+    .meter-rose { background: #B8433A; }
+
+    /* Outreach Strategy & Message Box */
+    .outreach-angle-tag {
+      display: inline-block;
+      background: var(--accent-teal-bg);
+      color: var(--accent-teal-text);
+      border: 1px solid var(--accent-teal-border);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .message-draft-box {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      box-shadow: 0 1px 2px rgba(60, 50, 35, 0.04);
+    }
+
+    .draft-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-subtle);
+    }
+
+    .draft-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--text-tertiary);
+    }
+
+    .draft-content {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Jobs Section */
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .job-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .job-role {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .job-location {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Decision Makers Section */
+    .dm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dm-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .dm-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dm-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .dm-name {
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text-primary);
+    }
+
+    .dm-title {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .dm-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .dm-action-btn:hover {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 680px) {
+      .overview-grid, .scores-grid, .split-grid, .firmographics-card {
+        grid-template-columns: 1fr;
+      }
+      .channel-status-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Status Bar -->
+    <div class="top-bar">
+      <span class="system-label">Isis // Intelligence Brief</span>
+      <span class="audit-date">Analyzed: October 21, 2026 | Live Growth Intelligence & Acquisition Stack</span>
+    </div>
+
+    <!-- 1. Header (Company Name, Website, Tier Badge + Dynamic Rationale) -->
+    <header class="header-section">
+      <div class="company-title-row">
+        <div>
+          <h1 class="company-name">Camel Media</h1>
+        </div>
+        <div class="tier-wrapper">
+          <div class="badge-tier">
+            <span class="badge-dot"></span>
+            Tier 2 (Medium Potential)
+          </div>
+          <span class="tier-rationale">Driven by commercial viability combined with an under-optimized short-form video presence.</span>
+        </div>
+      </div>
+      <a href="" target="_blank" class="website-link">
+        
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </header>
+
+    <!-- 2. What The Company Does (Core Value Proposition) -->
+    <div class="what-they-do-card">
+      <span class="what-they-do-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        What They Do & Core Value Proposition
+      </span>
+      <p class="what-they-do-text">
+        Camel Media operates an active brand in Saudi Arabia with customer touchpoints on Social / Media.
+      </p>
+    </div>
+
+    <!-- 2b. Basic Summary & Sector Context (Side by Side) -->
+    <div class="overview-grid">
+      <div class="basic-summary-box">
+        <span class="overview-label">Commercial Market Posture</span>
+        <p class="basic-summary-text">
+          Camel Media possesses established commercial traction, but exhibits clear short-form video and content scaling opportunities in the Saudi market.
+        </p>
+      </div>
+
+      <div class="sector-box">
+        <span class="overview-label">Sector Context</span>
+        <div>
+          <span class="sector-tag">Digital Content Production</span>
+        </div>
+        <p class="sector-text">
+          Competitive B2B sales cycle with high focus on measurable time-to-value and acquisition efficiency.
+        </p>
+      </div>
+    </div>
+    
+    <!-- 2c. Tech Stack & Page Speed -->
+    <div class="overview-grid">
+      <div class="sector-box">
+        <span class="overview-label">Detected Tech Stack</span>
+        <div style="margin-top: 8px;">
+          <span style="color: var(--text-tertiary);">No detectable stack</span>
+        </div>
+      </div>
+      <div class="basic-summary-box" style="align-items: center; justify-content: center; text-align: center;">
+        <span class="overview-label">Mobile PageSpeed Score</span>
+        <div class="score-val-row" style="margin-top: 5px;">
+          <span class="score-number">—</span>
+          <span class="score-scale">/ 100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2d. Firmographics Stats Row -->
+    <div class="firmographics-card">
+      <div class="firmographic-stat">
+        <span class="stat-label">Employee Count</span>
+        <span class="stat-value">Saudi Brand / Startup</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Funding & Stage</span>
+        <span class="stat-value">Engine: Social / Media</span>
+      </div>
+      <div class="firmographic-stat">
+        <span class="stat-label">Founded Year</span>
+        <span class="stat-value">Saudi Arabia</span>
+      </div>
+    </div>
+
+    <!-- 3. Score Overview -->
+    <div class="scores-grid">
+      <div class="score-card">
+        <div class="score-label">Potential Score</div>
+        <div class="score-val-row">
+          <span class="score-number">70</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-teal">Moderate Viability</span>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Opportunity Rating</div>
+        <div class="score-val-row">
+          <span class="score-number">0</span><span class="score-scale">/ 100</span><span class="score-badge-inline score-badge-green">Targeted Wedge</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Executive Briefing -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Executive Briefing</span>
+      </div>
+      <p class="executive-text">Camel Media has strong market fundamentals. Deploying professional short-form video creative and TikTok storytelling represents an immediate growth wedge for our agency.</p>
+    </div>
+
+    <!-- 4b. Brand & Cross-Channel Messaging Coherence Card -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Brand & Cross-Channel Messaging Coherence</span>
+      </div>
+      <div class="coherence-box">
+        <div class="coherence-header-row">
+          <span class="coherence-status-pill">Moderate Visual Alignment</span>
+          <span class="coherence-score-badge">Coherence Score: 7.5 / 10</span>
+        </div>
+
+        <!-- 3 Pillars Grid -->
+        <div class="coherence-pillars-grid">
+          <div class="coherence-pillar">
+            <span class="pillar-label">🎯 Core Value Consistency</span>
+            <span class="pillar-value pillar-val-consistency">Consistent Core Offering</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">📡 Channel Activity Health</span>
+            <span class="pillar-value pillar-val-health">Active Multi-Channel</span>
+          </div>
+          <div class="coherence-pillar">
+            <span class="pillar-label">🗣️ Audience & Tone Alignment</span>
+            <span class="pillar-value pillar-val-tone">Unified ICP &amp; Voice</span>
+          </div>
+        </div>
+
+        <p class="coherence-critique-text">Camel Media communicates a consistent core value proposition on its website. Expanding cross-channel video and organic thought leadership will further unify brand messaging.</p>
+
+        <div class="coherence-friction-box">
+          <div class="coherence-friction-title">⚠️ Identified Narrative Inconsistencies & Friction Points</div>
+          <ul class="coherence-friction-list" style="margin-left: 16px; margin-top: 4px; line-height: 1.45;">
+<li>Missing TikTok presence limits algorithmic discovery across Gen Z and millennial buyers in Saudi Arabia.</li><li>Opportunity to convert static product imagery into high-retention video Reels.</li>
+          </ul>
+        </div>
+
+        <div class="coherence-advice-box">
+          <div class="coherence-advice-title">💡 Strategic Narrative Unification Advice</div>
+          <p class="coherence-advice-text" style="line-height: 1.45;">Implement a bi-weekly short-form video production schedule combining founder storytelling and creator UGC.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Weaknesses & Opportunities (2-Column Layout) -->
+    <div class="split-grid">
+      <div class="split-panel">
+        <div class="panel-title title-weakness">
+          <span>Identified Weaknesses & Growth Impact</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item weakness-item">No major top-of-funnel conversion gaps detected on public homepage.</li>
+        </ul>
+      </div>
+
+      <div class="split-panel">
+        <div class="panel-title title-opportunity">
+          <span>Strategic Pitch Angles</span>
+        </div>
+        <ul class="panel-list">
+<li class="panel-item opportunity-item"><strong>Strategic Advisory:</strong> Offer a comprehensive digital stack audit.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. Social Media Activity Status & Posting Frequency -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Digital & Channel Footprint (Activity Status)</span>
+      </div>
+
+      <!-- Channel Grid (3x2) -->
+      <div class="channel-status-grid">
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">LinkedIn</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">X (Twitter)</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">YouTube</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Instagram</span>
+            <span class="status-pill status-active">Active</span>
+          </div>
+          <div><a href="https://www.instagram.com/camelmedia.sa/" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">View Channel ↗</a></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">TikTok</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
+        </div>
+
+        <div class="channel-card">
+          <div class="channel-card-top">
+            <span class="channel-name-tag">Facebook</span>
+            <span class="status-pill status-inactive">Inactive</span>
+          </div>
+          <div><span style="color: var(--text-tertiary); font-size: 11px;">Not detected</span></div>
+        </div>
+      </div>
+
+      <!-- Newsletter Status Row -->
+      <div class="newsletter-row"><span style="color: var(--text-secondary);">Email Newsletter & Lead Capture:</span><span class="status-pill status-inactive">Not Detected</span></div>
+
+      <!-- Posting Frequency Chart -->
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Estimated Posting Frequency (Posts / Week)</span>
+          <span class="data-window-caption">Estimated from public posts, last 90 days</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="postingFrequencyChart"></canvas>
+        </div>
+        <p class="companion-text">
+          <strong>Channel Activity Interpretation:</strong> LinkedIn serves as the primary B2B demand driver. Inactive or dormant channels represent untapped visual and short-form audience territory.</p>
+      </div>
+    </div>
+
+    <!-- 7. Strongest Growth Channel Analysis -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Growth Channel Strength Analysis</span>
+      </div>
+
+      <div class="growth-meters-list">
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Organic B2B Social &amp; Thought Leadership</span>
+            <span class="meter-score">75 / 100 — Strong Existing Channel</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-teal" style="width: 75%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Inbound Content &amp; Educational Resources</span>
+            <span class="meter-score">60 / 100 — Moderate Foundation</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-blue" style="width: 60%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Technical SEO &amp; AI Search Indexing (GEO)</span>
+            <span class="meter-score">38 / 100 — Underdeveloped Lever</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-amber" style="width: 38%;"></div>
+          </div>
+        </div>
+
+        <div class="growth-meter-item">
+          <div class="meter-label-row">
+            <span class="meter-name">Paid Retargeting &amp; Audience Remarketing</span>
+            <span class="meter-score">15 / 100 — Severe Leak / Untapped</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill meter-rose" style="width: 15%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="companion-text">
+        <strong>Strategic Pitch Rationale:</strong> While organic B2B social is their primary traffic driver, paid retargeting and AI schema indexing represent the fastest ROI outreach wedges.</p>
+    </div>
+
+    
+    <!-- 7.5 Post-Level Content Teardown & Optimization (AI Audit) -->
+    <div class="card" id="postLevelAnalysisCard" style="margin-bottom:20px;">
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <span class="section-title">Post-by-Post Content Teardown & Optimization</span>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Granular post critiques, live visual previews, and purpose-matched rewrites grounded in the Isis Knowledge Base.</p>
+        </div>
+        <span class="status-pill status-active" style="font-size:10.5px; background:rgba(15,118,110,0.12); color:#0F766E;">5 Posts Audited</span>
+      </div>
+      <div style="margin-top:16px;">
+        
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DeeYYhaklLr/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.fbcn16-1.fna.fbcdn.net/v/t39.30808-6/848120315_122319493808022817_77088927065938114_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=106&amp;_nc_map=urlgen_bucketless&amp;ig_cache_key=NDAwNzc0Nzk1NjY2OTMwNTU3OQ%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTA4MC5zZHIucmVndWxhcl9waG90by5DMyJ9&amp;_nc_ohc=sY9ooYsPLxEQ7kNvwFpP2Ee&amp;_nc_oc=AdpfeJ5YQ0DL9M84I0jzszTDO-Chye6eASE6OEpcBzH1bTqvs3yGFm4S9o1xnzfk3Jc&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=instagram.fbcn16-1.fna&amp;_nc_gid=CYUI84cAxCK0hp-Kp51Seg&amp;_nc_ss=7a20f&amp;oh=00_AQMzWNglO55ZGnFhZ7Cs9Lm66eXD4QpqQ-s1GjaXimFu3A&amp;oe=6ADF0BFC" 
+               alt="INSTAGRAM Image Post: اللهم احفظ لنا وطننا، وأدم عليه نعمة الأمن والأمان، واحفظ قيادته وشعبه وجنو..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            اللهم احفظ لنا وطننا، وأدم عليه نعمة الأمن والأمان، واحفظ قيادته وشعبه وجنوده، وردّ عنه كل شر، واجعل رايته عالية بالعزّ والمجد، واحفظه من كل سوء.<br>دام عزّك يا وطن، وحفظك الرحمن من كل مكروه. 💚<br><br>#السعودية #اللهم_احفظ_السعودية #وطننا_لا_ينحني #دام_عزك_ياوطن #السعودية_العظمى
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The post relies on standard institutional prayer formulas that read like a government ministry announcement rather than an authentic creative agency voice. While patriotic sentiment is essential in the Saudi market, expressing it without a distinct creative narrative or community touchpoint makes it invisible in crowded holiday feeds. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Made To Stick]</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_1')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_1" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+في كل زاوية من هذا الوطن، قصة تُروى، وفكرة تُبنى، وطموح يعانق السماء.
+
+من أرض التاريخ إلى مستقبل لا يعرف المستحيل، نفخر بأننا جزء من مسيرة الإبداع وصناعة الأثر في المملكة.
+
+دام عزّك يا وطن العطاء، ودام طموح أهلك وقوداً لكل قصة نجاح. 🇸🇦✨
+
+شاركونا في التعليقات: ما هي أكثر قصة نجاح سعودية ألهمتكم في مسيرتكم المهنية؟
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">اللهم احفظ لنا وطننا، وأدم عليه نعمة الأمن والأمان...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">في كل زاوية من هذا الوطن، قصة تُروى، وفكرة تُبنى، وطموح يعانق السماء...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces generic institutional prose with concrete, narrative-driven identity copy that reflects an agency&#x27;s creative craft and cultural pride. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">#السعودية #اللهم_احفظ_السعودية #وطننا_لا_ينحني...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">شاركونا في التعليقات: ما هي أكثر قصة نجاح سعودية ألهمتكم في مسيرتكم المهنية؟</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Swaps passive hashtag stuffing for a warm conversational prompt that sparks genuine comments and dwell time around professional and national pride. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[The Adweek Copywriting Handbook]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DewWHNpHHbh/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://scontent-man2-1.cdninstagram.com/v/t39.30808-6/858619248_122320560488022817_9210709520093823320_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;ig_cache_key=NDAxMjgwNDUyMDY5NTA2ODM4NQ%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTA4MC5zZHIucmVndWxhcl9waG90by5DMyJ9&amp;_nc_ohc=5m8CG9-CDfMQ7kNvwErit-b&amp;_nc_oc=Adq8Xn14pfPFYA0DO-H_eTYROfh77TNWmUhcH2a4feTTwKq8opt8cy9iOP5vAQjW1co&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=scontent-man2-1.cdninstagram.com&amp;_nc_gid=gStrGxcIaF218jHIJ66uyg&amp;_nc_ss=7a20f&amp;oh=00_AQMWNeFCJXSIcsSP7lesYo5mQYiuzJHoEFcl-s8iiUuOGA&amp;oe=6ADF1553" 
+               alt="INSTAGRAM Image Post: عندك براند وتحتاج فكرة Creative توقف عندها الناس؟ نقدم لك Creative Ideas مب..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            عندك براند وتحتاج فكرة Creative توقف عندها الناس؟<br><br>نقدم لك Creative Ideas مبنية على براندك، جمهورك، وهدف حملتك من الـConcept إلى الفكرة الجاهزة للتنفيذ.<br><br>اكتب Creative Idea ونعطيك افكار خارج الصندوق لبرانك 📩<br><br>#تسويق_السعودية #تسويق_رقمي_السعودية #براندات_سعودية #مشاريع_سعودية #اعلانات_السعودية
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          The caption suffers from excessive reliance on empty marketing buzzwords like &#x27;Creative&#x27; and &#x27;خارج الصندوق&#x27; without articulating a mechanism or business outcome. Relying on superficial comment-bait (&#x27;اكتب Creative Idea&#x27;) degrades agency positioning and triggers spam quality flags. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[CORE PLAYBOOK: marketing_playbook.md]</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_2')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_2" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+أغلب الإعلانات تمر أمام العميل في أجزاء من الثانية دون أن يلاحظها أحد.
+
+السبب؟ الفكرة تعتمد على &#x27;الشكل الجميل&#x27; بدل حل معضلة تجارية واضحة للعميل.
+
+صناعة الحملة الإعلانية الناجحة لا تبدأ من جلسة عصف ذهني عشوائية، بل تمر بثلاث مراحل:
+1. استخراج الزاوية النفسية التي تحرك رغبة الشراء لدى جمهورك.
+2. بناء خطاف بصري وسردي يكسر نمط التمرير في أول 3 ثوانٍ.
+3. ربط رسالة البراند بنتيجة ملموسة تجعل الشراء خطوة منطقية.
+
+احفظ هذا البوست كمرجع لفريقك قبل إطلاق حملتكم القادمة.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">عندك براند وتحتاج فكرة Creative توقف عندها الناس؟</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">أغلب الإعلانات تمر أمام العميل في أجزاء من الثانية دون أن يلاحظها أحد. السبب؟ الفكرة تعتمد على &#x27;الشكل الجميل&#x27; بدل حل معضلة تجارية واضحة للعميل.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Eliminates vague fluff in favor of identifying the exact commercial leak (scrolled-past creative) that high-intent business owners face. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[CORE PLAYBOOK: marketing_playbook.md]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">نقدم لك Creative Ideas مبنية على براندك... افكار خارج الصندوق</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">صناعة الحملة الإعلانية الناجحة لا تبدأ من جلسة عصف ذهني عشوائية، بل تمر بثلاث مراحل: 1. استخراج الزاوية النفسية... 2. بناء خطاف بصري... 3. ربط رسالة البراند بنتيجة ملموسة...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Replaces generic agency promises with a structured, step-by-step technical mechanism that delivers instant educational value. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[The Adweek Copywriting Handbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">اكتب Creative Idea ونعطيك افكار خارج الصندوق لبرانك 📩</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">احفظ هذا البوست كمرجع لفريقك قبل إطلاق حملتكم القادمة.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Removes low-intent comment bait and pivots toward high-value bookmarking/saving, which signals genuine evergreen authority. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) | Expandi]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Carousel</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DeuBZZMjhPP/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.fmxp6-1.fna.fbcdn.net/v/t39.30808-6/856238917_122320423886022817_5310104619242080254_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=102&amp;ig_cache_key=NDAxMjE1MDQ0MDgyMDkyODI2OQ%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuMTA4MC5zZHIucmVndWxhcl9waG90by5DMyJ9&amp;_nc_ohc=7ObAgbCH3ukQ7kNvwFyTN8Q&amp;_nc_oc=AdrdnIAok3Gk4QV8aOROvHMUWT92wUgOoynp5q1jWducVHHhyepcmg0Xcygu-kQmobWOGS28uCSUArBbIJlGhXF-&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=instagram.fmxp6-1.fna&amp;_nc_gid=xl5tJIImIne__R4b209ikA&amp;_nc_ss=7a20f&amp;oh=00_AQPZ3SEeicsZlR4yvLB3P0b6M7y0yyXewP-LMBvfCgZ67Q&amp;oe=6ADF091D" 
+               alt="INSTAGRAM Carousel Post: إحنا ما نكرر الأفكار، إحنا نصنعها بما يليق بكل براند. 🐪 براندك يستاهل حضور ..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            إحنا ما نكرر الأفكار، إحنا نصنعها بما يليق بكل براند. 🐪<br><br>براندك يستاهل حضور مختلف؟ <br><br>راسلنا، وخلّنا نصنع الفرق! 🚀<br><br>#الجمل_ميديا #التسويق_الرقمي #اليوم_الوطني_السعودي
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          A carousel post with an exceptionally thin caption that defaults to generic self-aggrandizement (&#x27;نصنع الفرق&#x27;). Carousels are the single highest-performing format for saves and dwell time, but squandering the caption space on hollow slogans fails to establish authority. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[Content, Inc. Summary]</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_3')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_3" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+تكرار أفكار المنافسين هو أسرع طريقة لتحويل براندك إلى مجرد نسخة مكررة في السوق.
+
+التميز لا يعني الغرابة، بل يعني امتلاك زاوية خاصة بك وحدك.
+
+3 معايير نختبر بها أصالة الفكرة قبل إنتاجها:
+
+1. هل يمكن للمنافس المباشر وضع شعاره على نفس الإعلان دون أن يلاحظ أحد الفرق؟ (إذا كان الجواب نعم، فالفكرة مكررة).
+2. هل تتحدث لغة العميل اليومية واحتياجه الفعلي، أم تتحدث لغة تسويقية معقدة؟
+3. هل تدفع العميل لاتخاذ إجراء واضح، أم تكتفي بالإعجاب العابر؟
+
+اسحب الشريحة وشاهد كيف بنينا زاوية الحضور لهذه الحملة ⬅️
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">إحنا ما نكرر الأفكار، إحنا نصنعها بما يليق بكل براند. 🐪</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">تكرار أفكار المنافسين هو أسرع طريقة لتحويل براندك إلى مجرد نسخة مكررة في السوق. التميز لا يعني الغرابة، بل يعني امتلاك زاوية خاصة بك وحدك.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Introduces a provocative opening and a sharp curiosity gap that addresses the genuine business threat of commoditization. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Made To Stick]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">براندك يستاهل حضور مختلف؟ راسلنا، وخلّنا نصنع الفرق! 🚀</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">3 معايير نختبر بها أصالة الفكرة قبل إنتاجها: 1. هل يمكن للمنافس المباشر وضع شعاره... 2. هل تتحدث لغة العميل... 3. هل تدفع العميل لاتخاذ إجراء...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Provides a tangible, testable evaluation criteria that brand managers can immediately use, maximizing carousel completion rate and dwell time. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[The Adweek Copywriting Handbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">#الجمل_ميديا #التسويق_الرقمي #اليوم_الوطني_السعودي</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">اسحب الشريحة وشاهد كيف بنينا زاوية الحضور لهذه الحملة ⬅️</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Drives intentional swipe behavior across the carousel frames instead of scattering user attention with mismatched tags. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[Content, Inc. Summary]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DebxLppGiWu/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://instagram.fsyd11-2.fna.fbcdn.net/v/t39.30808-6/843411146_122319346616022817_2788270042791917126_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=107&amp;_nc_map=urlgen_bucketless&amp;ig_cache_key=NDAwNzAxMjU5ODM4MjQ3MDU3NA%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTA4MC5zZHIucmVndWxhcl9waG90by5DMyJ9&amp;_nc_ohc=ysF8D3UBZ1gQ7kNvwERPoIF&amp;_nc_oc=AdrJidZGd6f3PCv0K34NSeezTnN4x_43UgI0XL5k_-T7NtDIdk4hC_ZuUKKcVYHckgU&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=instagram.fsyd11-2.fna&amp;_nc_gid=KT-BIvEi-E0rF7OW-Fz9Gw&amp;_nc_ss=7a20f&amp;oh=00_AQNymtGbPjVkOliJoe_IQczNbUW6-wt7UV-XfrlbRavjMg&amp;oe=6ADEF7F1" 
+               alt="INSTAGRAM Image Post: يوم قلنا نطلع عن المألوف، ما حطّينا للإبداع حدود! لو تبي Creative لبراندك؟ ..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            يوم قلنا نطلع عن المألوف، ما حطّينا للإبداع حدود!<br>لو تبي Creative لبراندك؟ تواصل معنا الان. 📩<br><br>#تسويق_السعودية #تسويق_رقمي_السعودية #براندات_سعودية #مشاريع_سعودية #اعلانات_السعودية
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          A two-line caption that illustrates severe narrative drift and anti-fluff violations. Promising &#x27;إبداع بلا حدود&#x27; without showing context, methodology, or audience benefits sounds like amateur freelance copy rather than an enterprise-ready creative agency. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[CORE PLAYBOOK: marketing_playbook.md]</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_4')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_4" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+الخروج عن المألوف ليس مجرد لقطة تصوير غريبة أو نص صادم.
+
+الإبداع الحقيقي في عالم الأعمال هو الفكرة التي تحقق أمرين في وقت واحد:
+1. تلفت انتباه الجمهور المناسب وتجعله يشاهد للنهاية.
+2. تحوّل هذا الانتباه إلى ثقة ورغبة حقيقية في تجربة منتجك أو خدمتك.
+
+إذا كانت حملتك القادمة لا تحقق الاثنين معاً، فأنت تدفع تكلفة المشاهدات دون عائد استثماري.
+
+ما هي أصعب عقبة تواجهونها عند التخطيط لمحتوى براندكم المرئي؟ شاركونا في التعليقات.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">يوم قلنا نطلع عن المألوف، ما حطّينا للإبداع حدود!</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">الخروج عن المألوف ليس مجرد لقطة تصوير غريبة أو نص صادم. الإبداع الحقيقي في عالم الأعمال هو الفكرة التي تحقق أمرين في وقت واحد...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Dismantles the tired trope of &#x27;art for art&#x27;s sake&#x27; by anchoring creative risk directly to measurable commercial performance. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[The Adweek Copywriting Handbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">لو تبي Creative لبراندك؟ تواصل معنا الان. 📩</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">إذا كانت حملتك القادمة لا تحقق الاثنين معاً، فأنت تدفع تكلفة المشاهدات دون عائد استثماري.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Frames the agency&#x27;s positioning around preventing wasted ad spend and conversion leaks rather than asking for immediate business. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[CORE PLAYBOOK: marketing_playbook.md]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">تواصل معنا الان. 📩</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">ما هي أصعب عقبة تواجهونها عند التخطيط لمحتوى براندكم المرئي؟ شاركونا في التعليقات.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Transforms a premature high-friction pitch into an open conversational prompt that invites qualitative market research from brand owners. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) | Expandi]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:8px; padding:18px; margin-bottom:18px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:4px; letter-spacing:0.02em;">INSTAGRAM</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">Format: <strong>Image</strong></span>
+        </div>
+        <a href="https://www.instagram.com/p/DeooD_OFCjU/" target="_blank" style="font-size:12px; color:#0F766E; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+          View Live Post ↗
+        </a>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:stretch;">
+        
+        <div style="flex-shrink:0; width:140px; height:140px; position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--border-medium); background:var(--bg-app);">
+          <img src="https://scontent-lga3-2.cdninstagram.com/v/t39.30808-6/857425014_122320038266022817_2111549252424658321_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=100&amp;ig_cache_key=NDAxMDYzMTY2NDA3NDIzODE2NA%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTA4MC5zZHIucmVndWxhcl9waG90by5DMyJ9&amp;_nc_ohc=IsG0_cWBYXsQ7kNvwHfCcf2&amp;_nc_oc=Ado_6XY0-bqlR03GEpg-oV8y1dckHnUjGHPkVx_9pGtA5D_PZ62MFtnP8ScUZfPjtE0&amp;_nc_ad=z-m&amp;_nc_cid=0&amp;_nc_zt=23&amp;_nc_ht=scontent-lga3-2.cdninstagram.com&amp;_nc_gid=NrBa0czAqbHQc3bdHdVy-g&amp;_nc_ss=7a20f&amp;oh=00_AQNKqg4D4ue3h3r717c-LSJkKUz7ha_iykDbrqpflIzQBA&amp;oe=6ADF14B0" 
+               alt="INSTAGRAM Image Post: وش اللي عندك… وما عند غيرك؟ مو بس وش تبيع، لكن وش المكان اللي تبي تاخذه في ..." 
+               style="width:100%; height:100%; object-fit:cover; display:block;" 
+               loading="lazy" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-app);">
+            <span style="font-size:18px;">📷</span>
+            <span style="margin-top:4px; font-weight:600; line-height:1.2;">Media Preview Expired</span>
+            <span style="font-size:9.5px; opacity:0.75; margin-top:2px;">(Signed CDN link)</span>
+          </div>
+        </div>
+        <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:6px;">Original Caption:</div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:12px 14px; font-size:12.5px; color:var(--text-primary); line-height:1.55; flex-grow:1; max-height:120px; overflow-y:auto;">
+            وش اللي عندك… وما عند غيرك؟<br>مو بس وش تبيع، لكن وش المكان اللي تبي تاخذه في ذهن العميل،<br> وليه يشوفك أنت الخيار المناسب <br>لأن إذا ما كان تميّزك واضح،<br>العميل بيشوفك مجرد خيار ثاني في السوق.<br><br>أرسل لنا براندك، وخلنا نحدد الـPositioning اللي يفرقك ويخلّي اختيارك أوضح. 📩<br><br>#تسويق_السعودية #تسويق_رقمي_السعودية #براندات_سعودية #مشاريع_سعودية #اعلانات_السعودية
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.06); border-left:3px solid #EF4444; border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#DC2626; font-weight:700; margin-bottom:4px;">Messaging & Hook Diagnostic:</div>
+        <div style="font-size:12.5px; color:var(--text-primary); line-height:1.55;">
+          This post touches on a vital marketing concept (category positioning), which is a commendable shift toward value-driven content. However, the copy remains too abstract and ends abruptly with a generic direct-message pitch instead of equipping founders with practical positioning diagnostics. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:11px; margin-top:4px;">[The Adweek Copywriting Handbook]</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.06); border-left:3px solid #10B981; border-radius:0 6px 6px 0; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#059669; font-weight:700;">Suggested Purpose-Aligned Rewrite:</div>
+          <button onclick="copySpecificText('rewrite_5')" style="background:#fff; border:1px solid #10B981; color:#059669; font-size:11px; font-weight:600; border-radius:4px; padding:3px 10px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            Copy Rewrite
+          </button>
+        </div>
+        <div id="rewrite_5" style="font-size:13px; color:var(--text-primary); line-height:1.6; white-space:pre-line; font-weight:500;">
+إذا سألت عميلك: &#x27;لماذا تشتري من هذا البراند تحديداً؟&#x27; ولم يجبك في جملة واحدة واضحة، فلديك تسرب صامت في المبيعات.
+
+التموضع (Positioning) ليس مجرد شعار رنان، بل هو المساحة الحصرية التي تحتلها في عقل عميلك عندما يفكر في مشكلته.
+
+كيف تكتشف تموضعك الحقيقي؟ أجب عن هذه الأسئلة الثلاثة:
+1. ما هي المشكلة المحددة التي نحلها بشكل أسهل وأسرع من أي منافس آخر؟
+2. من هو العميل المستهدف الذي صُمم حلنا خصيصاً له ونرفض خدمة غيره؟
+3. ما هو الدليل الملموس الذي يثبت قدرتنا على الوفاء بهذا الوعد؟
+
+احفظ هذا المنشور لتراجعه مع شريكك أو فريقك التسويقي في جلستكم القادمة.
+        </div>
+      </div>
+
+      
+      <div style="margin-top:14px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:700; margin-bottom:8px;">
+          Detailed Strategic Change Breakdown:
+        </div>
+        
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">وش اللي عندك… وما عند غيرك؟ مو بس وش تبيع...</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">إذا سألت عميلك: &#x27;لماذا تشتري من هذا البراند تحديداً؟&#x27; ولم يجبك في جملة واحدة واضحة، فلديك تسرب صامت في المبيعات.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Sharpens the theoretical question into a concrete, painful scenario that immediately highlights revenue risk for founders. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[CORE PLAYBOOK: marketing_playbook.md]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">لأن إذا ما كان تميّزك واضح، العميل بيشوفك مجرد خيار ثاني في السوق.</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">كيف تكتشف تموضعك الحقيقي؟ أجب عن هذه الأسئلة الثلاثة: 1. ما هي المشكلة المحددة... 2. من هو العميل المستهدف... 3. ما هو الدليل الملموس...</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Provides an immediate diagnostic framework answering the prospect&#x27;s unspoken question: &#x27;How do I actually fix this?&#x27; <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[The Adweek Copywriting Handbook]</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12px; line-height:1.45;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+              <div><strong style="color:var(--text-secondary); font-size:11px; text-transform:uppercase;">Original:</strong> <span style="color:var(--text-primary);">أرسل لنا براندك، وخلنا نحدد الـPositioning اللي يفرقك ويخلّي اختيارك أوضح. 📩</span></div>
+              <div><strong style="color:#059669; font-size:11px; text-transform:uppercase;">→ Optimized:</strong> <span style="color:var(--text-primary); font-weight:500;">احفظ هذا المنشور لتراجعه مع شريكك أو فريقك التسويقي في جلستكم القادمة.</span></div>
+            </div>
+            <div style="color:var(--text-secondary); font-size:11.5px; margin-top:3px;">
+              <strong>Strategic Why:</strong> Shifts the call to action from a premature hard sell to a reference bookmark, maximizing post retention and algorithmic authority. <span style="display:inline-block; background:rgba(15,118,110,0.12); color:#0F766E; padding:1px 6px; border-radius:4px; font-weight:600; font-size:10.5px; margin-left:6px;">[How the LinkedIn Algorithm Works in 2026 (and How to Use It to Generate More Leads) | Expandi]</span>
+            </div>
+          </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- 8. Outreach Angle & Message Starter -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Recommended Outreach Strategy</span>
+        <span class="status-pill status-active" style="font-size: 10px;">Primary Wedge</span>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+          <span class="outreach-angle-tag">TikTok Launch &amp; Short-Form Video Production</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
+          <strong>Why this angle:</strong> Immediate visual pain point that directly correlates with top-of-funnel customer acquisition in Saudi Arabia.</p>
+      </div>
+
+      <!-- Copyable Message Box -->
+      <div class="message-draft-box" style="border:1px solid var(--border-medium); border-radius:8px; background:var(--bg-surface); padding:16px;">
+        <div class="draft-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+          <div>
+            <span class="draft-label" style="font-size:12px; font-weight:700; color:var(--text-primary);">Draft Cold Outreach Message // Personalized for Camel Media Leadership</span>
+            <span style="display:inline-block; margin-left:8px; font-size:10.5px; color:#D97706; background:rgba(217,119,6,0.1); padding:1px 6px; border-radius:4px; font-weight:600;">Editable Scratchpad (Click to Edit)</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="copy-btn" onclick="resetOutreachMessage()" style="background:transparent; border:1px solid var(--border-medium); color:var(--text-secondary); font-size:11.5px; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:500;">
+              🔄 Reset to Original
+            </button>
+            <button class="copy-btn" id="mainCopyBtn" onclick="copyEditableMessage()" style="background:#0F766E; color:#fff; border:none; font-size:11.5px; padding:4px 10px; border-radius:4px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copyBtnText">Copy Outreach</span>
+            </button>
+          </div>
+        </div>
+        
+        <div id="outreachMessageText" 
+             contenteditable="true" 
+             data-original="Hi Camel Media Leadership,&#10;&#10;I was reviewing Camel Media&#x27;s digital presence and loved your current product positioning.&#10;&#10;I ran a quick technical audit on your web stack and noticed key conversion optimizations across retargeting and AI search visibility that can recover dropped inbound traffic.&#10;&#10;I drafted a 5-point teardown showing how to capture this traffic immediately. Happy to send it over if helpful?&#10;&#10;Best,&#10;[Your Name]"
+             style="min-height:160px; font-size:13.5px; line-height:1.65; color:var(--text-primary); font-family:inherit; white-space:pre-wrap; outline:none; padding:10px; border-radius:6px; border:1px dashed var(--border-medium); transition:border-color 0.2s;"
+             onfocus="this.style.borderColor='#0F766E'; this.style.background='rgba(15,118,110,0.02)';"
+             onblur="this.style.borderColor='var(--border-medium)'; this.style.background='transparent';">Hi Camel Media Leadership,
+
+I was reviewing Camel Media&#x27;s digital presence and loved your current product positioning.
+
+I ran a quick technical audit on your web stack and noticed key conversion optimizations across retargeting and AI search visibility that can recover dropped inbound traffic.
+
+I drafted a 5-point teardown showing how to capture this traffic immediately. Happy to send it over if helpful?
+
+Best,
+[Your Name]</div>
+
+        <div style="font-size:11px; color:var(--text-secondary); margin-top:8px; display:flex; align-items:center; gap:4px;">
+          <span>ℹ️ Note: Edits made in this scratchpad are temporary and not saved on page refresh.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Marketing Jobs Available -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Creative Strategy &amp; Short-Form Video Hooks // TikTok Short-Form Video &amp; UGC Creative Retainer</span>
+      </div>
+      <div class="jobs-list">
+
+        <div class="job-item" style="border-left: 3px solid #0F766E; padding-left: 10px;">
+          <span class="job-role" style="font-weight: 500;">🎬 <strong>Concept 1:</strong> Behind the scenes: How Camel Media crafts their best-selling products in Saudi Arabia.</span>
+          <span class="job-location" style="background: rgba(15, 118, 110, 0.12); color: #0F766E;">TikTok / Reel Hook</span>
+        </div>
+
+        <div class="job-item" style="border-left: 3px solid #0F766E; padding-left: 10px;">
+          <span class="job-role" style="font-weight: 500;">🎬 <strong>Concept 2:</strong> POV: Why everyone in Riyadh is talking about this product.</span>
+          <span class="job-location" style="background: rgba(15, 118, 110, 0.12); color: #0F766E;">TikTok / Reel Hook</span>
+        </div>
+
+        <div class="job-item" style="border-left: 3px solid #0F766E; padding-left: 10px;">
+          <span class="job-role" style="font-weight: 500;">🎬 <strong>Concept 3:</strong> The one thing you didn&#x27;t know about Camel Media.</span>
+          <span class="job-location" style="background: rgba(15, 118, 110, 0.12); color: #0F766E;">TikTok / Reel Hook</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Target Decision Makers -->
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Target Decision Makers (1 Available)</span>
+      </div>
+      <div class="dm-list">
+
+        <div class="dm-card" style="border: 1px dashed var(--border-medium);">
+          <div class="dm-info">
+            <div class="dm-avatar" style="background: rgba(15, 118, 110, 0.10); color: #0F766E;">🔍</div>
+            <div>
+              <div class="dm-name">Find Camel Media Marketing Decision Makers</div>
+              <div class="dm-title">Live LinkedIn Sales Navigator & People Search Query</div>
+            </div>
+          </div>
+          <a href="https://www.linkedin.com/search/results/people/?keywords=Camel%20Media%20Head%20of%20Marketing%20OR%20VP%20Marketing%20OR%20Founder" target="_blank" class="dm-action-btn" style="background: #0F766E; color: #FFFFFF; border-color: #0F766E;">
+            <span>Search Decision Makers on LinkedIn ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart.js & Clipboard Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const ctx = document.getElementById('postingFrequencyChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['LinkedIn', 'X (Twitter)', 'YouTube', 'Instagram', 'TikTok', 'Facebook'],
+          datasets: [{
+            label: 'Estimated Posts / Week',
+            data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            backgroundColor: ["#EDE3D3", "#EDE3D3", "#EDE3D3", "#A85A94", "#EDE3D3", "#EDE3D3"],
+            borderColor: [
+              'rgba(59, 95, 138, 0.3)',
+              'rgba(92, 86, 72, 0.3)',
+              'rgba(184, 72, 63, 0.3)',
+              'rgba(168, 90, 148, 0.3)',
+              'rgba(60, 50, 35, 0.12)',
+              'rgba(60, 50, 35, 0.12)'
+            ],
+            borderWidth: 1,
+            borderRadius: 4,
+            borderSkipped: false,
+            barThickness: 26
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#2A2420',
+              titleColor: '#FBF7F0',
+              bodyColor: '#EDE3D3',
+              borderColor: 'rgba(60, 50, 35, 0.15)',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return context.parsed.y + ' posts / week';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#6B5F52',
+                font: { family: "'Inter', sans-serif", size: 11, weight: '500' }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 5,
+              grid: {
+                color: 'rgba(60, 50, 35, 0.08)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9C9082',
+                font: { family: "'JetBrains Mono', monospace", size: 10 },
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    });
+
+    function copyEditableMessage() {
+      const text = document.getElementById('outreachMessageText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copyBtnText');
+        const orig = btnText.innerText;
+        btnText.innerText = '✓ Copied!';
+        setTimeout(() => { btnText.innerText = orig; }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+
+    function resetOutreachMessage() {
+      const el = document.getElementById('outreachMessageText');
+      const original = el.getAttribute('data-original');
+      if (original) {
+        el.innerText = original;
+        const btnText = document.getElementById('copyBtnText');
+        btnText.innerText = 'Reset Done';
+        setTimeout(() => { btnText.innerText = 'Copy Outreach'; }, 1500);
+      }
+    }
+
+    function copySpecificText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Rewrite copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+
+</body>
+</html>
